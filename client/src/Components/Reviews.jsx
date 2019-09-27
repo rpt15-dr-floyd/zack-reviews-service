@@ -51,7 +51,11 @@ class Reviews extends React.Component {
               <div className={style.recOrNot}>{this.state.toRecOrNot}</div>
               <div className={style.hours}>{this.props.review.recordHours} hrs on record</div>
             </div>
-            <div className={style.posted}>Posted: {this.props.review.posted.substring(4, 10)}</div>
+            <div className={style.posted}>Posted: {
+              this.props.review.posted /* conditional - if posted property exists */
+              ? this.props.review.posted.substring(4, 10)
+              : "Unknown Post Date"
+              }</div>
             <div className={style.content}>{this.props.review.body}</div>
             <div className={style.space}></div>
             <div className={style.line}></div>

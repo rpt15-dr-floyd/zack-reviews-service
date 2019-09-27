@@ -1,7 +1,7 @@
 {
-  "name": "therese_reviews",
-  "version": "1.0.0",
-  "description": "",
+  "name": "zack-reviews-service",
+  "version": "1.1.0",
+  "description": "SDC Project for Hack Reactor RPT15 - Dr.Floyd group 09-24-2019",
   "main": "index.js",
   "scripts": {
     "test": "jest",
@@ -12,17 +12,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rpt15-fec-tabata-yoga/Therese_Reviews.git"
+    "url": "git+https://github.com/rpt15-dr-floyd/zack-reviews-service.git"
   },
-  "author": "Thérèse Brown",
+  "author": "Zack K. Miller (SDC) - {Thérèse Brown (FEC)}",
   "license": "ISC",
   "engines": {
-    "node": ">=12"
+    "node": ">=10"
   },
   "bugs": {
-    "url": "https://github.com/rpt15-fec-tabata-yoga/Therese_Reviews/issues"
+    "url": "https://github.com/rpt15-dr-floyd/zack-reviews-service/issues"
   },
-  "homepage": "https://github.com/rpt15-fec-tabata-yoga/Therese_Reviews#readme",
+  "homepage": "https://github.com/rpt15-dr-floyd/zack-reviews-service#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",

@@ -8,7 +8,7 @@
     "build": "webpack -d --watch",
     "start": "nodemon server/index.js",
     "startDocker": "node db/seed.js && sleep 2 && nodemon server/index.js",
-    "seed": "node db/seed.js"
+    "seed:pg": "node db/seedPG.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     "@babel/core": "^7.5.5",
     "axios": "^0.19.0",
     "babel-watch": "^7.0.0",
+    "bluebird": "^3.7.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "compression-webpack-plugin": "^3.0.0",
@@ -47,9 +48,11 @@
     "faker": "^4.1.0",
     "mongoose": "^5.6.9",
     "nodemon": "^1.19.1",
+    "pg": "^7.12.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "request": "^2.88.0",
+    "shelljs": "^0.8.3",
     "style-loader": "^1.0.0",
     "webpack": "^4.39.1",
     "webpack-cli": "^3.3.6"

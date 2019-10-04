@@ -1,4 +1,4 @@
-const Promise  = require('bluebird');
+// const Promise  = require('bluebird');
 const shell = require('shelljs');
 
 function runSeed() {

@@ -1,9 +1,8 @@
-// const Promise  = require('bluebird');
 const shell = require('shelljs');
 
 function runSeed() {
   var runsOf4000 = 0;
-
+  var start = new Date();
   function runAgain() {
     runsOf4000++;
     shell.exec('node db/postgres.js', (code, output, error) => {
@@ -11,7 +10,8 @@ function runSeed() {
         console.log('Runs out of 2500:', runsOf4000);
         runAgain();
       } else {
-        console.log('10 Million Records Seeded!');
+        var end = new Date() - start;
+        console.log('10 Million Records Seeded in', JSON.stringify(end).slice(0, 4), 'seconds');
         return;
       }
     });

@@ -9,16 +9,16 @@ CREATE DATABASE reviews;
 \c reviews;
 
 CREATE TABLE reviewsTable (
-  id SERIAL, /*  Newly Added */
+  id SERIAL PRIMARY KEY, /*  Newly Added */
   game VARCHAR(50),
   gameId INT,
   author VARCHAR(50),
   numOfGames INT,
   numOfReviews INT,
-  posted VARCHAR(50), /* DATETIME is a possible alt */
+  posted TIMESTAMP, /* updated from VARCHAR(50) */
   recordHours INT,
   body VARCHAR(1000),
-  recommended BIT, /* Instead of BOOLEAN */
+  recommended BIT, /* represents BOOLEAN */
   helpful INT,
   unhelpful INT,
   funny INT,

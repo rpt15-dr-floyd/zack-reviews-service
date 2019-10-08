@@ -69,6 +69,7 @@ function seed(numOfData) {
           arr2 += `::int[]`;
           arr4 += `::int[]`;
           arr5 += `::int[]`;
+          arr6 += `::timestamp[]`; // date/time
           arr7 += `::int[]`;
           arr9 += `::bit[]`; // boolean
           arr10 += `::int[]`;
@@ -89,4 +90,5 @@ function seed(numOfData) {
 }
 
 seed(4000); // === 4 K --> the most records that can run at one time before array error occurs
+// seed(2); // === 4 K --> seed 2 new records to test
 // seed(10000000); // === 10 Million

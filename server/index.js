@@ -21,9 +21,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // C.R.U.D. - READ
 app.get('/api/reviews/:gameId', (req, res) => {
+  var start = new Date();
+  // console.log()
   db.fetch(req.params.gameId).then((data) => {
     res.status(200);
     res.send(JSON.stringify(data));
+
+    // check how much time the call takes to complete
+    var end = new Date() - start;
+
+    console.log('Processing time:', end + 'ms')
   }).catch((err) => {
     res.status(500).send({ error: 'Unable to fetch reviews from the database' });
   });

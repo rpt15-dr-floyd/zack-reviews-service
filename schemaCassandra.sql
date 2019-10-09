@@ -9,19 +9,20 @@ CREATE KEYSPACE reviews WITH replication = {'class': 'SimpleStrategy', 'replicat
 USE reviews;
 
 CREATE TABLE reviewsTable (
-  /* id UUID PRIMARY KEY,  Newly Added */
+  id int, /* id = given INDEX ON within the DB */
   game text,
   gameId int,
   author text,
   numOfGames int,
   numOfReviews int,
-  posted text,
+  posted timestamp,
   recordHours int,
-  body text PRIMARY KEY,
+  body text,
   recommended Boolean,
   helpful int,
   unhelpful int,
   funny int,
   comments int,
-  userPhoto text
+  userPhoto text,
+  PRIMARY KEY (gameId, posted) /* gameId = PARTITION KEY, posted = CLUSTERING COL */
 );

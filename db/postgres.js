@@ -1,5 +1,5 @@
-const { Client } = require('pg');
 const faker = require('faker');
+const { Client } = require('pg');
 const pgClient = new Client({
   // user: 'Zack', password: '', host: '', port: '5432',
   database: 'reviews'

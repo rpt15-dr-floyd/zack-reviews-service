@@ -48,3 +48,5 @@ function seedCQL(n) {
 }
 
 seedCQL(Number(process.argv[2]));
+
+// module.exports = client;

@@ -10,7 +10,8 @@ const port = 3001;
 /* POSTGRES CONFIG */
 const { Client } = require('pg');
 const pgClient = new Client({
-  database: 'reviews'
+  // database: 'reviews'
+  database: 'ec2-user', user: 'postgres', password: ''//, host: '[EC2-INSTANCE]', port: '5432'
 });
 pgClient.connect();
 

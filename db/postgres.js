@@ -90,5 +90,3 @@ function seed(numOfData) {
 }
 
 seed(4000); // === 4 K --> the most records that can run at one time before array error occurs
-// seed(2); // === 4 K --> seed 2 new records to test
-// seed(10000000); // === 10 Million

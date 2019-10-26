@@ -7,6 +7,7 @@
     "test": "jest",
     "build": "webpack -d --watch",
     "start": "nodemon server/index.js",
+    "start-ec2": "node server/index.js",
     "startDocker": "node db/seed.js && sleep 2 && nodemon server/index.js",
     "seed:pg": "psql -f schema.sql && node db/seedPG.js",
     "seed:cql": "cqlsh -f schemaCassandra.sql && node db/seedCQL.js"

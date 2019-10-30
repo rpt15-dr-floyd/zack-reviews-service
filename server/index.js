@@ -11,7 +11,7 @@ const port = 3001;
 const { Client } = require('pg');
 const pgClient = new Client({
   // database: 'reviews'
-  database: 'ec2-user', user: 'postgres', password: ''//, host: '[EC2-INSTANCE]', port: '5432'
+  database: 'reviews', user: 'power_user', password: 'zack', host: 'ec2-52-53-233-6.us-west-1.compute.amazonaws.com', port: '5432'
 });
 pgClient.connect();
 

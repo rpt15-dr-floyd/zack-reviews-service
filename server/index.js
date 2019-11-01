@@ -1,9 +1,8 @@
 // require('newrelic');
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
-// const db = require('../db/index.js'); // MongoDB
-const compression = require('compression');
+// const cors = require('cors');
+// const compression = require('compression');
 const app = express();
 const port = 3001;
 
@@ -23,22 +22,29 @@ pgClient.connect();
 //   keyspace: 'reviews'
 // });
 
-app.get('*.js', (req, res, next) => {
-  req.url = req.url + '.gz';
-  res.set('Content-Encoding', 'gzip');
-  next();
-});
+// app.get('*.js', (req, res, next) => {
+//   req.url = req.url + '.gz';
+//   res.set('Content-Encoding', 'gzip');
+//   next();
+// });
 
 app.use('/:gameId', express.static(__dirname + '/../public'));
 app.use('/', express.static(__dirname + '/../public'));
-app.use(cors());
-app.use(compression());
+// app.use(cors());
+// app.use(compression());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+ });
 
 /* C.R.U.D. - READ PostgreSQL */
 app.get('/api/reviews/:gameId', (req, res) => {
-  let query = `SELECT * FROM reviewstable WHERE gameId = ${req.params.gameId} ORDER BY posted DESC LIMIT 45`;
+  var gameId = req.params.gameId ? req.params.gameId : 1;
+  let query = `SELECT * FROM reviewstable WHERE gameId = ${gameId} ORDER BY posted DESC LIMIT 45`;
   pgClient.query(query)
     .then((data) => {
       res.status(200);

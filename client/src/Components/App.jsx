@@ -8,8 +8,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // gameId: window.location.pathname.split('/')[1],
-      gameId: 1,
+      gameId: window.location.pathname.split('/')[1],
+      // gameId: 1,
       reviews: [],
       overallPosOrNeg: '',
       recentPosOrNeg: '',
@@ -120,7 +120,7 @@ class App extends React.Component {
         <div className={style.reviewsContainer}>
           <div className={style.reviewsMainHeader}>Most Helpful Reviews <span className={style.reviewsSubtleHeader}>In the past 30 days</span></div>
           {this.state.reviews.map((rev) => {
-            return <Reviews key={rev._id} review={rev} />
+            return <Reviews key={rev.id} review={rev} />
           })}
         </div>
       </div>

@@ -28,8 +28,10 @@ pgClient.connect();
 //   next();
 // });
 
+app.use('/', express.static(__dirname + '/../')); // *** FOR Loader.io
 app.use('/:gameId', express.static(__dirname + '/../public'));
-app.use('/', express.static(__dirname + '/../public'));
+// app.use('/', express.static(__dirname + '/../public'));
+
 // app.use(cors());
 // app.use(compression());
 app.use(bodyParser.json());

@@ -14,6 +14,10 @@ const pgClient = new Client({
 });
 pgClient.connect();
 
+var redisClient = require('redis').createClient;
+var redis = redisClient(6379, 'localhost'); // or localhost or 127.0.0.1
+// var redis = redisClient(6379, 'http://ec2-52-53-170-110.us-west-1.compute.amazonaws.com'); // or localhost or 127.0.0.1
+
 /* CASSANDRA CONFIG */
 // const cassandra = require('cassandra-driver');
 // const client = new cassandra.Client({
@@ -37,25 +41,40 @@ app.use('/:gameId', express.static(__dirname + '/../public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
- });
+});
 
 /* C.R.U.D. - READ PostgreSQL */
 app.get('/api/reviews/:gameId', (req, res) => {
   var gameId = req.params.gameId ? req.params.gameId : 1;
-  let query = `SELECT * FROM reviewstable WHERE gameId = ${gameId} ORDER BY posted DESC LIMIT 45`;
-  pgClient.query(query)
-    .then((data) => {
+
+  redis.get(gameId, (err, reply) => {
+    if (err) { console.log(err); }
+    else if (reply) { // Exists in cache
+      // console.log('REPLY', typeof JSON.parse(reply), JSON.parse(reply))
       res.status(200);
-      res.send(data.rows);
-    })
-    .catch(err => {
-      console.log(err)
-      res.end('Not successful');
-    })
+      res.send(JSON.parse(reply));
+    } else {
+
+      let query = `SELECT * FROM reviewstable WHERE gameId = ${gameId} ORDER BY posted DESC LIMIT 45`;
+      pgClient.query(query)
+        .then((data) => {
+
+          redis.set(gameId, JSON.stringify(data.rows));
+
+          res.status(200);
+          res.send(data.rows);
+        })
+        .catch(err => {
+          console.log(err)
+          res.end('Not successful');
+        })
+
+    }
+  });
 });
 
 /* C.R.U.D. - CREATE PostgreSQL */
@@ -65,23 +84,23 @@ app.post('/api/reviews/:gameId', (req, res) => {
   pgClient.query(query, queryArgs).then(() => {
     res.end('Posted')
   })
-  .catch(err => {
-    console.log(err)
-    res.end('Not successful');
-  })
+    .catch(err => {
+      console.log(err)
+      res.end('Not successful');
+    })
 });
 
 /* C.R.U.D. - UPDATE PostgreSQL */
 app.put('/api/reviews/:gameId/:author', (req, res) => {
-  let query  = `UPDATE reviewstable SET body = $1 WHERE gameId = $2 AND author = $3`;
+  let query = `UPDATE reviewstable SET body = $1 WHERE gameId = $2 AND author = $3`;
   let queryArgs = [req.body.body, req.params.gameId, req.params.author];
   pgClient.query(query, queryArgs).then(() => {
     res.end('Successfully Updated Review');
   })
-  .catch(err => {
-    console.log(err)
-    res.end('Not successful');
-  })
+    .catch(err => {
+      console.log(err)
+      res.end('Not successful');
+    })
 });
 
 /* C.R.U.D. - DELETE PostgreSQL */
@@ -91,23 +110,23 @@ app.delete('/api/reviews/:gameId/:author', (req, res) => {
   pgClient.query(query, queryArgs).then(() => {
     res.end('Successful delete');
   })
-  .catch(err => {
-    console.log(err);
-    res.end('Not successful');
-  })
+    .catch(err => {
+      console.log(err);
+      res.end('Not successful');
+    })
 });
 
 /* C.R.U.D. - READ Cassandra */
 // app.get('/api/reviews/:gameId', (req, res) => {
-  //   let query = `SELECT * FROM reviewstable WHERE gameId = ${req.params.gameId} ORDER BY posted DESC LIMIT 45`;
-  //   client.execute(query, [], { prepare: true }).then((data) => {
-    //     res.status(200);
-    //     res.send(data.rows);
+//   let query = `SELECT * FROM reviewstable WHERE gameId = ${req.params.gameId} ORDER BY posted DESC LIMIT 45`;
+//   client.execute(query, [], { prepare: true }).then((data) => {
+//     res.status(200);
+//     res.send(data.rows);
 
-    //   }).catch(err => {
-      //     console.log(err)
-      //     res.end('Not successful');
-      //   })
+//   }).catch(err => {
+//     console.log(err)
+//     res.end('Not successful');
+//   })
 // });
 
 // /* C.R.U.D. - CREATE Cassandra */

@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "webpack -d --watch",
-    "start": "nodemon server/index.js",
-    "start-ec2": "node server/index.js",
+    "build-client": "webpack --config client.webpack.config.js -d --watch",
+    "build-server": "webpack --config server.webpack.config.js -d --watch",
+    "start": "nodemon server/start.js",
+    "start-ssr": "nodemon server/newIndex.js",
+    "start-ec2": "nodemon server/index.js",
     "seed:pg": "psql -f schema.sql && node db/seedPG.js",
     "seed:cql": "cqlsh -f schemaCassandra.sql && node db/seedCQL.js"
   },
@@ -27,7 +29,6 @@
   "devDependencies": {
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
-    "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
@@ -37,8 +38,8 @@
   "dependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
+    "@babel/register": "^7.7.0",
     "axios": "^0.19.0",
-    "babel-watch": "^7.0.0",
     "body-parser": "^1.19.0",
     "cassandra-driver": "^4.2.0",
     "compression": "^1.7.4",
@@ -47,16 +48,18 @@
     "css-loader": "^3.2.0",
     "express": "^4.17.1",
     "faker": "^4.1.0",
+    "global": "^4.4.0",
+    "ignore-styles": "^5.0.1",
     "newrelic": "^5.13.0",
     "nodemon": "^1.19.1",
     "pg": "^7.12.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "redis": "^2.8.0",
-    "request": "^2.88.0",
     "shelljs": "^0.8.3",
     "style-loader": "^1.0.0",
     "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6"
+    "webpack-cli": "^3.3.6",
+    "webpack-node-externals": "^1.7.2"
   }
 }

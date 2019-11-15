@@ -1,6 +1,8 @@
 // require('newrelic');
 const express = require('express');
+// import * as express from 'express';
 const bodyParser = require('body-parser');
+const fs = require('fs');
 // const cors = require('cors');
 // const compression = require('compression');
 const app = express();
@@ -14,9 +16,9 @@ const pgClient = new Client({
 });
 pgClient.connect();
 
-var redisClient = require('redis').createClient;
-var redis = redisClient(6379, 'localhost'); // or localhost or 127.0.0.1
-// var redis = redisClient(6379, 'http://ec2-52-53-170-110.us-west-1.compute.amazonaws.com'); // or localhost or 127.0.0.1
+// var redisClient = require('redis').createClient;
+// var redis = redisClient(6379, 'localhost'); // or localhost or 127.0.0.1
+
 
 /* CASSANDRA CONFIG */
 // const cassandra = require('cassandra-driver');
@@ -33,8 +35,7 @@ var redis = redisClient(6379, 'localhost'); // or localhost or 127.0.0.1
 // });
 
 app.use('/', express.static(__dirname + '/../')); // *** FOR Loader.io
-app.use('/:gameId', express.static(__dirname + '/../public'));
-// app.use('/', express.static(__dirname + '/../public'));
+// app.use('/:gameId', express.static(__dirname + '/../public'));
 
 // app.use(cors());
 // app.use(compression());
@@ -47,23 +48,33 @@ app.use(function (req, res, next) {
   next();
 });
 
+
+app.use('/:gameId', (req, res, next) => {
+
+  next();
+});
+app.use('/:gameId', express.static(__dirname + '/../public'));
+
+
 /* C.R.U.D. - READ PostgreSQL */
 app.get('/api/reviews/:gameId', (req, res) => {
   var gameId = req.params.gameId ? req.params.gameId : 1;
 
-  redis.get(gameId, (err, reply) => {
-    if (err) { console.log(err); }
-    else if (reply) { // Exists in cache
-      // console.log('REPLY', typeof JSON.parse(reply), JSON.parse(reply))
-      res.status(200);
-      res.send(JSON.parse(reply));
-    } else {
+  // redis.get(gameId, (err, reply) => {
+  //   if (err) { console.log(err); }
+  //   else if (reply) { // Exists in cache
+  //     // console.log('REPLY', typeof JSON.parse(reply), JSON.parse(reply))
+  //     res.status(200);
+  //     res.send(JSON.parse(reply));
+  //   } else {
 
       let query = `SELECT * FROM reviewstable WHERE gameId = ${gameId} ORDER BY posted DESC LIMIT 45`;
       pgClient.query(query)
         .then((data) => {
 
-          redis.set(gameId, JSON.stringify(data.rows));
+          // redis.set(gameId, JSON.stringify(data.rows));
+
+
 
           res.status(200);
           res.send(data.rows);
@@ -73,8 +84,8 @@ app.get('/api/reviews/:gameId', (req, res) => {
           res.end('Not successful');
         })
 
-    }
-  });
+  //   }
+  // });
 });
 
 /* C.R.U.D. - CREATE PostgreSQL */

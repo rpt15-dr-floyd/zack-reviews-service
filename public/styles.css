@@ -1,0 +1,679 @@
+html {
+  color: -internal-root-color;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: #1b2838;
+  color: #acb2b8;
+}
+
+h2 {
+  margin-bottom: 0px;
+  font-family: "Motiva Sans", Sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 10px;
+  letter-spacing: 2px;
+  font-weight: normal;
+  padding-top: 2px;
+  padding-bottom: 4px;
+  background-image: url(https://steamstore-a.akamaihd.net/public/images/v6/maincol_gradient_rule.png);
+  display: block;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+}
+
+.statContainer {
+  background-color: #2a475e;
+  box-shadow: 0 0 5px #000;
+  position: relative;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.statBar {
+  margin-bottom: 0px;
+  border-bottom: 1px solid #000000;
+  padding: 10px;
+  background: none;
+  min-height: 38px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.summary {
+  display: inline-block;
+  margin-right: 15px;
+  color: #8ba6b6;
+  min-width: 320px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.title {
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: normal;
+  font-size: 15px;
+  margin-bottom: 5px;
+  color: #e5e5e5;
+  display: block;
+}
+
+.posOrNeg {
+  color: #66C0F4;
+  cursor: help;
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: bold;
+  font-size: 17px;
+  line-height: 9px;
+  text-shadow: 1px 1px rgba( 0, 0, 0, 0.2 );
+}
+
+.numOfRevs {
+  color: #8ba6b6;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.filterContainer {
+  padding: 0px;
+  font-size: 12px;
+  margin-bottom: 30px;
+  background-color: #1f2f42;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+}
+
+.filterMenu {
+  border-left: 1px solid #2a475e;
+  position: relative;
+  float: left;
+  padding-right: 10px;
+  display: block;
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+}
+
+.filterTitle {
+  text-transform: uppercase;
+  font-size: 10px;
+  color: #4582a5;
+  padding: 10px;
+  padding-right: 20px;
+  cursor: pointer;
+  background-image: url(https://steamstore-a.akamaihd.net/public/images/v6/btn_arrow_down_padded.png);
+  background-repeat: no-repeat;
+  background-position-y: center;
+  background-position-x: right;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.displayContainer {
+  float: left;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: #4582a5;
+  padding: 5px 10px;
+  border-left: 1px solid #2a475e;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.displayTitle {
+  text-transform: uppercase;
+  font-size: 10px;
+  color: #4582a5;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+select {
+  width: 100px;
+  background: #4582a5;
+  font-size: 12px;
+  border: none;
+  border-radius: 2px;
+  margin-left: 5px;
+  margin-top: 2px;
+  overflow: visible !important;
+  -webkit-writing-mode: horizontal-tb !important;
+  text-rendering: auto;
+  color: black;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: start;
+  -webkit-appearance: menulist;
+  box-sizing: border-box;
+  align-items: center;
+  white-space: pre;
+  -webkit-rtl-ordering: logical;
+  cursor: default;
+  font: 400 11px system-ui;
+}
+
+option {
+  font-weight: normal;
+  display: block;
+  white-space: pre;
+  min-height: 1.2em;
+  font-size: 12px;
+}
+
+.graphContainer {
+  float: right;
+  display: block;
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+}
+
+.graphBar {
+  display: inherit;
+  border-radius: 2px;
+  border: none;
+  padding: 1px;
+  cursor: pointer;
+  text-decoration: none !important;
+  color: #67c1f5 !important;
+  background: rgba( 103, 193, 245, 0.2 );
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.graphTitle {
+  display: inline;
+  padding: 0 5px;
+  font-size: 12px;
+  line-height: 20px;
+  border-radius: 2px;
+  background: transparent;
+  cursor: pointer;
+  color: #67c1f5 !important;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.dblDwnArrow {
+  background-position: 0px -12px;
+  width: 14px;
+  height: 16px;
+  margin-right: 7px;
+  margin-top: 4px;
+  background: url(https://steamstore-a.akamaihd.net/public/images/v6/app/review_graph_expander.png);
+  background-repeat: no-repeat;
+  background-size: 14px 26px;
+  display: inline-block;
+  cursor: pointer;
+  color: #67c1f5 !important;
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.filterListContainer {
+  border-bottom: 1px solid #000;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.filterList {
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.filterListTitle {
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: normal;
+  text-transform: none;
+  font-size: 15px;
+  color: #c6d4df;
+  padding-bottom: 5px;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.activeFilter {
+  background-color: rgba( 255, 255, 255, 0.2 );
+  padding: 5px;
+  padding-right: 25px;
+  margin-right: 5px;
+  border-radius: 2px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-image: url(https://steamstore-a.akamaihd.net/public/images/v6/deleteSearchTerm.png);
+  background-position: right 5px center;
+  display: inline-block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.filterOverviewContainer {
+  display: block;
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: normal;
+  padding-top: 10px;
+  font-size: 15px;
+  color: #c6d4df;
+}
+
+.filterOverviewBar {
+  display: block;
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: normal;
+  font-size: 15px;
+  color: #c6d4df;
+}
+
+.filterOverview {
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: normal;
+  font-size: 15px;
+  color: #c6d4df;
+}
+
+.filterPosOrNeg {
+  cursor: help;
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: bold;
+  color: #66C0F4;
+  font-size: 15px;
+}
+
+.reviewsContainer {
+  display: block;
+  margin-top: 0px;
+  min-height: 1000px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+  float: none;
+  width: auto;
+  margin-left: 0;
+}
+
+.reviewsMainHeader {
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  color: #ffffff;
+  text-transform: uppercase;
+  padding-bottom: 5px;
+  letter-spacing: 2px;
+  display: block;
+}
+
+.reviewsSubtleHeader {
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #56707f;
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: normal;
+  letter-spacing: 2px;
+}
+
+.reviewContainer {
+  background-color: rgba( 0, 0, 0, 0.2 );
+  margin-bottom: 26px;
+  background-image: url(https://steamstore-a.akamaihd.net/public/images/v6/maincol_gradient_rule.png);
+  background-repeat: no-repeat;
+  background-position: top left;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.reviewBox {
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.authorContainer {
+  float: none;
+  width: auto;
+  margin-left: 0;
+  padding: 8px;
+  opacity: 0.6;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.avatarContainer {
+  float: left;
+  padding-right: 8px;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.avatarBox {
+  background: linear-gradient( to bottom, rgba(106,106,106,1) 5%, rgba(85,85,85,1) 95%);
+  filter: none;
+  width: 34px;
+  height: 34px;
+  position: relative;
+  border-radius: 0;
+  padding: 1px;
+  display: block;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.avatarImg {
+  background: linear-gradient( to bottom, #515151 5%, #474747 95%);
+  width: 32px;
+  height: 32px;
+  padding: 1px;
+  border-radius: 0;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.authorName {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 140px;
+  overflow: hidden;
+  margin-top: -2px;
+  margin-bottom: -1px;
+  display: inline-block;
+  color: #c1dbf4;
+  font-size: 13px;
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.numOfGames {
+  color: #c1dbf4;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 17px;
+  font-family: Arial, Helvetica, sans-serif;
+  display: block;
+}
+
+.numOfRevs {
+  color: #c1dbf4;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: Arial, Helvetica, sans-serif;
+  display: block;
+}
+
+.summaryContainer {
+  padding: 8px;
+  float: none;
+  width: auto;
+  margin-left: 0;
+  position: relative;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.recContainer {
+  overflow: hidden;
+  margin: 8px 0 13px;
+  display: block;
+  background: rgba( 0, 0, 0, 0.2 );
+  height: 40px;
+  text-decoration: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.recImgContainer {
+  float: left;
+  margin-right: 10px;
+  display: block;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.recImg {
+  border: none;
+  width: 40px;
+  height: 40px;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.logoImg {
+  float: right;
+  margin-right: 5px;
+  margin-top: 12px;
+  opacity: 0.5;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.recOrNot {
+  font-size: 16px;
+  color: #d6d7d8;
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: normal;
+  padding: 3px 0px 0px 0px;
+  line-height: 19px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  cursor: pointer;
+}
+
+.hours {
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: 300;
+  font-size: 11px;
+  line-height: 15px;
+  color: #8091a2;
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  cursor: pointer;
+}
+
+.posted {
+  margin: 0px 0px 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-style: normal;
+  color: #8091a2;
+  display: inline-block;
+  opacity: 0.6;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.content {
+  margin-right: 8px;
+  font-family: "Motiva Sans", Sans-serif;
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 17px;
+  color: #acb2b8;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  display: block;
+}
+
+.space {
+  font-size: 10px;
+  font-style: italic;
+  color: #626366;
+  margin: 0px;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.line {
+  background-color: #363f4c;
+  height: 1px;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.helpfulContainer {
+  margin: 8px 0;
+  display: inline-block;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #c6d4df;
+  font-size: 12px;
+}
+
+.text {
+  display: inline-block;
+  margin-right: 9px;
+  color: #8091a2;
+  font-size: 12px;
+  opacity: 0.6;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.yesContainer {
+  border-radius: 2px;
+  border: none;
+  padding: 1px;
+  display: inline-block;
+  cursor: pointer;
+  text-decoration: none !important;
+  color: #66c0f4 !important;
+  background: #212c3d;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.yes {
+  padding: 0 5px;
+  font-size: 12px;
+  line-height: 20px;
+  border-radius: 2px;
+  display: block;
+  background: transparent;
+  cursor: pointer;
+  color: #66c0f4 !important;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.yesImg {
+  background-position: -112px -16px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url(https://steamstore-a.akamaihd.net/public/shared/images/buttons/icons_16.png?v=5);
+  vertical-align: text-top;
+  font-style: italic;
+  font-size: 12px;
+  line-height: 20px;
+  cursor: pointer;
+  color: #66c0f4 !important;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.noImg {
+  background-position: -64px -16px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url(https://steamstore-a.akamaihd.net/public/shared/images/buttons/icons_16.png?v=5);
+  vertical-align: text-top;
+  font-style: italic;
+  font-size: 12px;
+  line-height: 20px;
+  cursor: pointer;
+  color: #66c0f4 !important;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.funnyImg {
+  background-position: -208px -16px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url(https://steamstore-a.akamaihd.net/public/shared/images/buttons/icons_16.png?v=5);
+  vertical-align: text-top;
+  font-style: italic;
+  font-size: 12px;
+  line-height: 20px;
+  cursor: pointer;
+  color: #66c0f4 !important;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.voteInfo {
+  padding: 0px 9px 8px 0px;
+  font-size: 12px;
+  color: #647580;
+  min-height: 16px;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.commentsContainer {
+  float: right;
+  display: block;
+  font-size: 12px;
+  color: #647580;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.comments {
+  text-decoration: none;
+  color: #66c0f4;
+  background-image: url(https://steamstore-a.akamaihd.net/public/shared/images/comment_quoteicon_blue.png);
+  background-position: right;
+  background-repeat: no-repeat;
+  padding-right: 20px;
+  display: inline-block;
+  height: 16px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+}

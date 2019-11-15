@@ -10,6 +10,8 @@ node_modules/
 newrelic.js
 newrelic_agent.log
 
+loaderio-23ddc77dc6988661ed24b2bb1a98f8a2.html
+
 pids
 *.pid
 logs

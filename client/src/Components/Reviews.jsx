@@ -1,5 +1,5 @@
 import React from 'react';
-import style from '../Styles/Reviews.css';
+// import style from '../Styles/Reviews.css';
 
 class Reviews extends React.Component {
   constructor(props) {
@@ -30,69 +30,133 @@ class Reviews extends React.Component {
 
   render() {
     return (
-      <div className={style.reviewContainer}>
-        <div className={style.reviewBox}>
-          <div className={style.authorContainer}>
-            <div className={style.avatarContainer}>
-              <div className={style.avatarBox}>
-                <img className={style.avatarImg} src={this.props.review.userPhoto}></img>
+      <div>
+        <div className="reviewBox">
+          <div className="authorContainer">
+            <div className="avatarContainer">
+              <div className="avatarBox">
+                <img className="avatarImg" src={this.props.review.userPhoto}></img>
               </div>
             </div>
-            <div className={style.authorName}> {this.props.review.author} </div>
-            <div className={style.numOfGames}>{this.props.review.numOfGames} products in account</div>
-            <div className={style.numOfRevs}>{this.props.review.numOfReviews} reviews</div>
+            <div className="authorName"> {this.props.review.author} </div>
+            <div className="numOfGames">{this.props.review.numOfGames} products in account</div>
+            <div className="numOfRevs">{this.props.review.numOfReviews} reviews</div>
           </div>
-          <div className={style.summaryContainer}>
-            <div className={style.recContainer}>
-              <div className={style.recImgContainer}>
-                <img className={style.recImg} src={this.state.toRecOrNotImg}></img>
+          <div className="summaryContainer">
+            <div className="recContainer">
+              <div className="recImgContainer">
+                <img className="recImg" src={this.state.toRecOrNotImg}></img>
               </div>
-              <img className={style.logoImg} src="https://steamstore-a.akamaihd.net/public/shared/images/userreviews/icon_review_steam.png"></img>
-              <div className={style.recOrNot}>{this.state.toRecOrNot}</div>
-              <div className={style.hours}>{this.props.review.recordHours} hrs on record</div>
+              <img className="logoImg" src="https://steamstore-a.akamaihd.net/public/shared/images/userreviews/icon_review_steam.png"></img>
+              <div className="recOrNot">{this.state.toRecOrNot}</div>
+              <div className="hours">{this.props.review.recordHours} hrs on record</div>
             </div>
-            <div className={style.posted}>Posted: {
+            <div className="posted">Posted: {
               this.props.review.posted /* conditional - if posted property exists */
               ? this.props.review.posted.substring(4, 10)
               : "Unknown Post Date"
               }</div>
-            <div className={style.content}>{this.props.review.body}</div>
-            <div className={style.space}></div>
-            <div className={style.line}></div>
-            <div className={style.helpfulContainer}>
-              <span className={style.text}>Was this review helpful?</span>
-              <div className={style.yesContainer}>
-                <span className={style.yes}>
-                  <img className={style.yesImg}></img>
+            <div className="content">{this.props.review.body}</div>
+            <div className="space"></div>
+            <div className="line"></div>
+            <div className="helpfulContainer">
+              <span className="text">Was this review helpful?</span>
+              <div className="yesContainer">
+                <span className="yes">
+                  <img className="yesImg"></img>
                   Yes
                 </span>
               </div>
-              <div className={style.yesContainer}>
-                <span className={style.yes}>
-                  <img className={style.noImg}></img>
+              <div className="yesContainer">
+                <span className="yes">
+                  <img className="noImg"></img>
                   No
                 </span>
               </div>
-              <div className={style.yesContainer}>
-                <span className={style.yes}>
-                  <img className={style.funnyImg}></img>
+              <div className="yesContainer">
+                <span className="yes">
+                  <img className="funnyImg"></img>
                   Funny
                 </span>
               </div>
             </div>
-            <div className={style.voteInfo}>
+            <div className="voteInfo">
               {this.props.review.helpful} people found this review helpful
               <br></br>
               {this.props.review.unhelpful} people found this review unhelpful
               <br></br>
               {this.props.review.funny} people found this review funny
-              <div className={style.commentsContainer}>
-                <div className={style.comments}> {this.props.review.comments} </div>
+              <div className="commentsContainer">
+                <div className="comments"> {this.props.review.comments} </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      // <div className={style.reviewContainer}>
+      //   <div className={style.reviewBox}>
+      //     <div className={style.authorContainer}>
+      //       <div className={style.avatarContainer}>
+      //         <div className={style.avatarBox}>
+      //           <img className={style.avatarImg} src={this.props.review.userPhoto}></img>
+      //         </div>
+      //       </div>
+      //       <div className={style.authorName}> {this.props.review.author} </div>
+      //       <div className={style.numOfGames}>{this.props.review.numOfGames} products in account</div>
+      //       <div className={style.numOfRevs}>{this.props.review.numOfReviews} reviews</div>
+      //     </div>
+      //     <div className={style.summaryContainer}>
+      //       <div className={style.recContainer}>
+      //         <div className={style.recImgContainer}>
+      //           <img className={style.recImg} src={this.state.toRecOrNotImg}></img>
+      //         </div>
+      //         <img className={style.logoImg} src="https://steamstore-a.akamaihd.net/public/shared/images/userreviews/icon_review_steam.png"></img>
+      //         <div className={style.recOrNot}>{this.state.toRecOrNot}</div>
+      //         <div className={style.hours}>{this.props.review.recordHours} hrs on record</div>
+      //       </div>
+      //       <div className={style.posted}>Posted: {
+      //         this.props.review.posted /* conditional - if posted property exists */
+      //         ? this.props.review.posted.substring(4, 10)
+      //         : "Unknown Post Date"
+      //         }</div>
+      //       <div className={style.content}>{this.props.review.body}</div>
+      //       <div className={style.space}></div>
+      //       <div className={style.line}></div>
+      //       <div className={style.helpfulContainer}>
+      //         <span className={style.text}>Was this review helpful?</span>
+      //         <div className={style.yesContainer}>
+      //           <span className={style.yes}>
+      //             <img className={style.yesImg}></img>
+      //             Yes
+      //           </span>
+      //         </div>
+      //         <div className={style.yesContainer}>
+      //           <span className={style.yes}>
+      //             <img className={style.noImg}></img>
+      //             No
+      //           </span>
+      //         </div>
+      //         <div className={style.yesContainer}>
+      //           <span className={style.yes}>
+      //             <img className={style.funnyImg}></img>
+      //             Funny
+      //           </span>
+      //         </div>
+      //       </div>
+      //       <div className={style.voteInfo}>
+      //         {this.props.review.helpful} people found this review helpful
+      //         <br></br>
+      //         {this.props.review.unhelpful} people found this review unhelpful
+      //         <br></br>
+      //         {this.props.review.funny} people found this review funny
+      //         <div className={style.commentsContainer}>
+      //           <div className={style.comments}> {this.props.review.comments} </div>
+      //         </div>
+      //       </div>
+      //     </div>
+      //   </div>
+      // </div>
     );
   }
 };

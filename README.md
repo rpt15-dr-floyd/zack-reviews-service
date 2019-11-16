@@ -13,43 +13,44 @@
 ## Table of Contents
 <!-- TOC -->
 
-- [1. DATABASE 1 PostgreSQL](#1-database-1-postgresql)
-  - [1.1. PostgreSQL installation](#11)
-  - [1.2. Run PostgreSQL](#12)
-  - [1.3. PostgreSQL Schema](#13)
-  - [1.4. Populating PostgreSQL DB](#14)
-- [2. DATABASE 2 - Cassandra](#2)
-  - [2.1. Cassandra installation](#21)
-  - [2.2. Run Cassandra](#22)
-  - [2.3. Cassandra Schema](#23)
-  - [2.4. Populating Cassandra DB](#24)
-- [3. DBMS Benchmarking & Performance](#3)
-  - [3.1. Querying PostgreSQL](#31)
-  - [3.2. Querying Cassandra](#32)
-- [4. DEPLOYMENT](#4)
-  - [4.1. Deploying PostgreSQL](#41)
-  - [4.2. Deploying Microservice & Proxy Server](#42)
-  - [4.3. Detach Screen](#43)
-- [5. OPTIMIZATION 1: Redis (cache)](#5)
-  - [5.1. Configuring Redis](#51)
-  - [5.2. Load Testing - Redis](#52)
-- [6. OPTIMIZATION 2: Server-Side Rendering (SSR)](#6)
-  - [6.1. Options & Challenges](#61)
-  - [6.2. Load Testing SSR HTML](#62)
+- [1. DATABASE 1 PostgreSQL](#1-database-1:-postgresql)
+  - [1.1. PostgreSQL Installation](#11-postgresql-installation)
+  - [1.2. Run PostgreSQL](#12-run-postgresql)
+  - [1.3. PostgreSQL Schema](#13-postgresql-schema)
+  - [1.4. Populating PostgreSQL DB](#14-populating-postgresql-db)
+- [2. DATABASE 2: Cassandra](#2-database-2:-cassandra)
+  - [2.1. Cassandra installation](#21-cassandra-installation)
+  - [2.2. Run Cassandra](#22-run-cassandra)
+  - [2.3. Cassandra Schema](#23-cassandra-schema)
+  - [2.4. Populating Cassandra DB](#24-populating-cassandra-db)
+- [3. DBMS Benchmarking & Performance](#3-dbms-benchmarking-&-performance)
+  - [3.1. Querying PostgreSQL](#31-querying-postgresql)
+  - [3.2. Querying Cassandra](#32-querying-cassandra)
+- [4. DEPLOYMENT](#4-deployment)
+  - [4.1. Deploying PostgreSQL](#41-deploying-postgresql)
+  - [4.2. Deploying Microservice & Proxy Server](#42-deploying-microservice-&-proxy-server)
+  - [4.3. Detach Screen](#43-detach-screen)
+- [5. OPTIMIZATION 1: Redis](#5-optimization-1:-redis)
+  - [5.1. Configuring Redis](#51-configuring-redis)
+  - [5.2. Load Testing Redis](#52-load-testing-redis)
+- [6. OPTIMIZATION 2: Server Side Rendering](#6-optimization-2:-server-side-rendering)
+  - [6.1. Options & Challenges](#61-options-&-challenges)
+  - [6.2. Load Testing SSR HTML](#62-load-testing-ssr-html)
 
-## 1. DATABASE 1 PostgreSQL
-#### 1.1. PostgreSQL installation
+## 1. DATABASE 1: PostgreSQL
+#### 1.1. PostgreSQL Installation
 [Postgres.app](https://postgresapp.com/)
 
 To more easily access Postgres commands from the terminal, we must add this line to `~/.bash_profile` or `~/.zshrc` (in in the case of having `Z Shell` installed) to tell the terminal where the bin folder of the Postgres.app lives.
 ```sh
 # terminal
 $~ open .zshrc
+```
 
-# add the following line to .zshrc if your app lives in the Applications folder
-export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/11/bin
+Add the following line to .zshrc if your app lives in the Applications folder:
+`export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/11/bin`
 
-# terminal
+```sh
 $~ source .zshrc
 ```
 
@@ -146,8 +147,8 @@ shelljs.exec(‘node queryFile.js’, () => {
 2500 calls of 4000 === 10 Million
 This seed script completed 10M records in about 44 minutes.
 
-## 2. DATABASE 2 - Cassandra
-#### 2.1. Cassandra installation
+## 2. DATABASE 2: Cassandra
+#### 2.1. Cassandra Installation
 Java version 13 didn’t play nice with Cassandra 3.11.4, so I installed the known-compatible Java version 8.0_221.
 
 Then, we must add this line to `~/.bash_profile` or `~/.zshrc` (in in the case of having `Z Shell` installed) to change default java to 8.
@@ -171,7 +172,7 @@ $~ cassandra
 If Cassandra and Java are installed and compatible together a long message will ensue, ending with several lines of “INFO …”
 ```sh
 # new terminal window - the following command gets us into the Cassandra shell
-$~ **cqlsh**
+$~ cqlsh
 ```
 
 #### 2.3. Cassandra Schema
@@ -196,7 +197,7 @@ PRIMARY KEY (gameId, posted)
 
 Then load into Cassandra with this command:
 ```sh
-$~ **cqlsh** -f schemaFile.sql
+$~ cqlsh -f schemaFile.sql
 ```
 
 #### 2.4. Populating Cassandra DB
@@ -340,7 +341,7 @@ $~ sudo locate pg_hba.conf
 $~ sudo vi /var/lib/pgsql/data/pg_hba.conf
 ```
 At bottom of the file change ident’s => md5 to allow for password authentication. It should look like this:
-![pg_hba.conf](https://imgur.com/Mqun4N1)
+![pg_hba.conf](https://i.imgur.com/Mqun4N1.png)
 
 ```sh
 $~ sudo locate postgresql.conf
@@ -348,7 +349,7 @@ $~ sudo locate postgresql.conf
 $~ sudo vim /var/lib/pgsql/data/postgresql.conf
 ```
 Under “Connection Settings” change the listen address and the port, which may also need to be uncommented, like this:
-![postgresql.conf](https://imgur.com/BGaHobB)
+![postgresql.conf](https://i.imgur.com/BGaHobB.png)
 
 ```sh
 sudo service postgresql restart
@@ -418,19 +419,21 @@ $~ screen -r <screenName>
 There we can see the processes that are still running in the background. We can have multiple screens running on one instance, which is how I set up a Redis-Server and Node.js server on the same instance.
 [More info about the Linux Screen](https://www.howtoforge.com/linux_screen)
 
-## 5. OPTIMIZATION 1: Redis (cache)
+## 5. OPTIMIZATION 1: Redis
 #### 5.1. Configuring Redis
 
 After getting Redis installed, we can configure it for optimal performance in our environment. To find the config file:
 ```sh
 $~ sudo find / -name "redis.conf"
 ```
+
 Then, open the file with VIM:
 ```sh
 $~ sudo vi /usr/local/src/redis-stable/redis.conf
 ``` 
 
-Here are some of the configurations options that I modified. There is still much more to learn about how to maximize Redis’s performance:
+Here are some of the configurations options that I modified.
+There is still much more to learn about how to maximize Redis’s performance:
 - tcp-backlog
 - databases
 - maxclients
@@ -443,6 +446,7 @@ To run Redis with the default config:
 ```sh
 $~ redis-server
 ```
+
 To run Redis with the updated config file options:
 ```sh
 $~ redis-server /usr/local/src/redis-stable/redis.conf
@@ -450,39 +454,43 @@ $~ redis-server /usr/local/src/redis-stable/redis.conf
 
 Testing with and without the config modifications, I was able to see slight improvements with the config file modified.  So, I used the config file when I ran the Redis load tests below.
 
-#### 5.2. Load Testing - Redis
+#### 5.2. Load Testing Redis
 Load tests were run with [Loader.io](https://loader.io/)
 
 GET Requests made to a range of 3,000 GameId pages selected at random (querying the Postgres DB of 10M+)
 
 ##### Before Optimization
-**In 5 consecutive 30 sec runs.**
-Run 1. GET 300 RPS - avg. 7977ms fail
-Run 2. GET 300 RPS - avg. 5769ms
-Run 3. GET 300 RPS - avg. 3987ms
-Run 4. GET 300 RPS - avg. 3247ms **best** *- the improvement in performance up to this point indicates that Postgres is doing a bit of caching on its own.*
-Run 5. GET 300 RPS - no improvement
+**In 4 consecutive 30 sec runs.**
+- Run 1. GET 300 RPS - avg. 7977ms fail
+- Run 2. GET 300 RPS - avg. 5769ms
+- Run 3. GET 300 RPS - avg. 3987ms
+- Run 4. GET 300 RPS - avg. 3247ms **best** 
+
+*- the improvement in performance up to this point indicates that Postgres is doing a bit of caching on its own.*
 
 { 300 RPS was the highest my DB could handle responding to w/o optimizations }
 
 ##### After Optimization
 **- Redis installed and configured on the Server EC2. Queried a fresh 3,000 Game Id's in 3 consecutive 30 sec runs.**
-Run 1. GET 300 RPS - avg. 7729ms fail
-Run 2. GET 300 RPS - avg. 1762ms
-Run 3. GET 300 RPS - avg. 64ms **best** *- fully cached*
+- Run 1. GET 300 RPS - avg. 7729ms fail
+- Run 2. GET 300 RPS - avg. 1762ms
+- Run 3. GET 300 RPS - avg. 64ms **best** 
+*- fully cached*
 
 ##### Additional Redis Stress Test
 500 RPS was about the highest I was able to handle with Redis installed (as opposed to barely 300 without).
+
 I tested this Redis config over 5,000 randomly selected Game Id's in 4 consecutive runs.
-Run 1. GET 500 RPS - avg. 7393ms fail
-Run 2. GET 500 RPS - avg. 4076ms
-Run 3. GET 500 RPS - avg. 558ms
-Run 4. GET 500 RPS - avg. 64ms **best** *- fully cached*
+- Run 1. GET 500 RPS - avg. 7393ms fail
+- Run 2. GET 500 RPS - avg. 4076ms
+- Run 3. GET 500 RPS - avg. 558ms
+- Run 4. GET 500 RPS - avg. 64ms **best**
+*- fully cached*
 
 Redis only helped performance - no downside was observed in this configuration. However, a better way to use Redis would be to install it on the database’s EC2, or even better its own dedicated EC2 instance. This would allow Redis full access to the processing power of one instance without competing for CPU with the server or DB.
 
 
-## 6. OPTIMIZATION 2: Server-Side Rendering (SSR)
+## 6. OPTIMIZATION 2: Server Side Rendering
 #### 6.1. Options & Challenges
 In a React app, the first requirement to SSR is getting the app on the server so that it’s content can be read and attached to the HTML page, stringified, and then sent to the client.
 However, React is written in ES6 syntax with the keyword `import` which Node.js (written in ES5 with the keyword `require`) doesn’t understand out of the box. To allow Node to read ES6, the server code must be re-written with ES6 `import` statements and compiled with `Babel` before the server is started. < Babel converts the ES6 to ES5 >

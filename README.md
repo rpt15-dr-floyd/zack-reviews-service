@@ -1,44 +1,48 @@
 # SDC Engineering Journal and Notes - Zack K. Miller
 
 > System Design Capstone project for Hack Reactor RPT15.
-> This is the “Reviews” microservice for a clone of a single game (i.e. product) page on [Steam] (https://store.steampowered.com/games/)
+> This is the “Reviews” microservice for a clone of a single product page on [Steam](https://store.steampowered.com/games/)
 
 ## Related Projects
-	•	[Proxy Server] (https://github.com/rpt15-dr-floyd/zack-proxy)
-	•	[Josh_Overview] (https://github.com/rpt15-dr-floyd/Josh_Overview)
-	•	[Justin_Features] (https://github.com/rpt15-dr-floyd/Justin_Features)
+
+
+  - [Proxy Server](https://github.com/rpt15-dr-floyd/zack-proxy)
+  - [Josh_Overview](https://github.com/rpt15-dr-floyd/Josh_Overview)
+  - [Justin_Features](https://github.com/rpt15-dr-floyd/Justin_Features)
+
 ## Table of Contents
-	•	[1. DATABASE 1 - PostgreSQL]
-	◦	[1.1 PostgreSQL installation]
-	◦	[1.2 Run PostgreSQL]
-	◦	[1.3 PostgreSQL Schema]
-	◦	[1.4 Populating PostgreSQL DB] 
-	•	[2. DATABASE 2 - Cassandra]
-	◦	[2.1 Cassandra installation]
-	◦	[2.2 Run Cassandra]
-	◦	[2.3 Cassandra Schema]
-	◦	[2.4 Populating Cassandra DB] 
-	•	[3. DBMS Benchmarking & Performance]
-	◦	[3.1. Querying PostgreSQL]
-	◦	[3.2. Querying Cassandra]
+<!-- TOC -->
 
-	•	[4. DEPLOYMENT]
-	◦	[4.1. Deploying PostgreSQL]
-	◦	[4.2. Deploying Microservice & Proxy Server]
-	◦	[4.3. Detach Screen] 
-	◦	[5. OPTIMIZATION 1: Redis (cache)]
-	◦	[5.1. Configuring Redis]
-	◦	[5.2. Load Testing - Redis]
+- [1. DATABASE 1 - PostgreSQL]
+  - [1.1 PostgreSQL installation]
+  - [1.2 Run PostgreSQL]
+  - [1.3 PostgreSQL Schema]
+  - [1.4 Populating PostgreSQL DB]
+- [2. DATABASE 2 - Cassandra]
+  - [2.1 Cassandra installation]
+  - [2.2 Run Cassandra]
+  - [2.3 Cassandra Schema]
+  - [2.4 Populating Cassandra DB]
+- [3. DBMS Benchmarking & Performance]
+  - [3.1. Querying PostgreSQL]
+  - [3.2. Querying Cassandra]
+- [4. DEPLOYMENT]
+  - [4.1. Deploying PostgreSQL]
+  - [4.2. Deploying Microservice & Proxy Server]
+  - [4.3. Detach Screen]
+- [5. OPTIMIZATION 1: Redis (cache)]
+  - [5.1. Configuring Redis]
+  - [5.2. Load Testing - Redis]
+- [6. OPTIMIZATION 2: Server-Side Rendering (SSR)]
+  - [6.1. Options & Challenges]
+  - [6.2. Load Testing SSR HTML]
 
-	◦	[6. OPTIMIZATION 2: Server-Side Rendering (SSR)]
-	◦	[6.1. Options & Challenges]
-	◦	[6.2. Load Testing SSR HTML] 
 ### 1. DATABASE 1 - PostgreSQL
 ###### 1.1 PostgreSQL installation
-[Postgres.app] (https://postgresapp.com/)
+[Postgres.app](https://postgresapp.com/)
 
 To more easily access Postgres commands from the terminal, we must add this line to `~/.bash_profile` or `~/.zshrc` (in in the case of having `Z Shell` installed) to tell the terminal where the bin folder of the Postgres.app lives.
-``` sh
+```sh
 # terminal
 $~ open .zshrc
 
@@ -50,13 +54,13 @@ $~ source .zshrc
 ```
 
 ###### 1.2 Run PostgreSQL
-``` sh
+```sh
 $~ **psql**
 ```
 
 ###### 1.3 PostgreSQL Schema
 I created a schema file ending with `.sql`, which allows VSCode to recognize the syntax as SQL. In the schema: 
-``` sql
+```sql
 CREATE databaseName;
 
 \c databaseName;
@@ -75,18 +79,19 @@ I used:
 `id INT NOT NULL AUTO_INCREMENT`
 
 Then load into PostgreSQL with this command:
-``` sh
+```sh
 $~ **psql** -f schemaFile.sql
 ```
 
 ###### 1.4 Populating PostgreSQL DB
-``` sh
+```sh
 $~ npm i -s pg 
 # (i === install, -s === -save)
 ```
 ![npm-pg](https://i.imgur.com/k1RlmKB.png)
+
 With the `const pgClient` setup, we can now query to the database via:
-``` js
+```js
 pgClient.connect()
   .then(() => {
     return **pgClient.query()**
@@ -102,7 +107,7 @@ There is a special statement that solves this puzzle.
 `unnest(ARRAY[])` will iterate through the enclosed array and create that many (array.length) new records in Postgres.
 
 Example of how to insert 3 new records with 2 columns each:
-``` sql
+```sql
 ‘INSERT INTO tableName (col1, col2) VALUES (unnest(ARRAY[“val1a”, “val1b”, “val1c”]), unnest(ARRAY[“val2a”, “val2b”, “val2c”]))’
 # the first ARRAY maps to col1 and the second to col2
 ```
@@ -111,7 +116,7 @@ I was using the second argument of `.query()` to define the queryArgs. `queryArg
 After writing a function that could generate these arrays and properly place them in the `query()`, let the system errors guide me.
 
 The first errors were about the `DATA TYPE` not being correct. This was *not* erroring out when I tested it with a single record, but began only when I implemented the `unnest(ARRAY[])` feature.  After several tests, I realized that if the data type needed was `INT`, I could put it directly in the `queryString`, but not in the `queryArgs` (which is where I wanted it). And the opposite was true of data type `VARCHAR`, it only worked in the `queryArgs`. The solution, I found again through googling:
-``` js
+```js
 unnest(ARRAY[]::int[])
 # adding ::int[] to the end of each unnest function tells Postgres that these are INTEGERS
 ```
@@ -128,11 +133,12 @@ There had to be a way to recursively call a function has already ended its promi
 
 For this, I decided to use a separate `.js` file that would trigger the original file containing the `.query()` from the terminal, **asynchronously** with a `callback` after each execution, until we reached 10M.
 
-``` sh
+```sh
 $~ npm i -s shelljs
 ```
-``` js
-# Then, in Javascript
+
+Then, in Javascript
+```js
 shelljs.exec(‘node queryFile.js’, () => {
   // *recursively call this function 2500x*
 })
@@ -145,7 +151,7 @@ This seed script completed 10M records in about 44 minutes.
 Java version 13 didn’t play nice with Cassandra 3.11.4, so I installed the known-compatible Java version 8.0_221.
 
 Then, we must add this line to `~/.bash_profile` or `~/.zshrc` (in in the case of having `Z Shell` installed) to change default java to 8.
-``` sh
+```sh
 # terminal
 $~ open .zshrc
 
@@ -158,12 +164,12 @@ $~ source .zshrc
 ```
 
 ###### 2.2 Run Cassandra 
-``` sh
+```sh
 # terminal
 $~ cassandra
 ```
 If Cassandra and Java are installed and compatible together a long message will ensue, ending with several lines of “INFO …”
-``` sh
+```sh
 # new terminal window - the following command gets us into the Cassandra shell
 $~ **cqlsh**
 ```
@@ -171,7 +177,7 @@ $~ **cqlsh**
 ###### 2.3 Cassandra Schema
 Because Cassandra’s syntax is so similar to SQL, I created a schema file ending with `.sql`, (just like before) which allows VSCode to recognize most of the necessary syntax as SQL. This schema went through a few iterations before landing here (see [3.2. Querying Cassandra] below). Within this file, we can set the initial parameters for setup including the KEYSPACE (Cassandra’s equivalent to an SQL database), TABLE definitions with COLUMN names DATA TYPES and PRIMARY KEY(s). 
 
-``` sql
+```sql
 CREATE KEYSPACE databaseName WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3};
 
 USE databaseName;
@@ -189,12 +195,12 @@ PRIMARY KEY (gameId, posted)
 ```
 
 Then load into Cassandra with this command:
-``` sh
+```sh
 $~ **cqlsh** -f schemaFile.sql
 ```
 
 ###### 2.4 Populating Cassandra DB
-``` sh
+```sh
 $~ npm i -s cassandra-driver
 ```
 ![cassandra-driver](https://i.imgur.com/1KnvqpJ.png)
@@ -221,7 +227,7 @@ An index is a key:value store, that will cut query times down significantly. Thi
 
 Not only can we index individual columns, but even by groups of relevant columns. e.g. I want to search for a specific gameId, within a certain range of id values, ordered by posted (date) descending. So my 3 values to consider for indexing are gameId, id, & posted, but because id is the `PRIMARY KEY` it is already indexed:
 
-``` sql
+```sql
 CREATE INDEX ON reviewsTable (gameId);
 CREATE INDEX ON reviewsTable (posted);
 CREATE INDEX ON reviewsTable (gameId, posted);
@@ -229,35 +235,36 @@ CREATE INDEX ON reviewsTable (gameId, posted);
 
 ###### Results
 The following are the two queries that I will be testing, because they are the queries in my API that will need to return the most records:
-``` sql
+```sql
 # Querying the Top 10% of DB only
 SELECT * FROM reviewsTable WHERE gameId = 1 AND id > 9000000 ORDER BY posted DESC LIMIT 45;
 # id > 9000000 === most recent 10% of database
 ```
-``` sql
+
+```sql
 # Querying the Whole DB
 SELECT * FROM reviewsTable WHERE gameId = 1 ORDER BY posted DESC LIMIT 45;
 ```
 
-####### *Results: Pre-Indexing*
-**Top 10% of DB: completed in about 285 ms**
-**Whole DB: completed in about 15 seconds!**
+####### Results: Pre-Indexing
+- Top 10% of DB: completed in about 285 ms
+- Whole DB: completed in about 15 seconds!
 
-####### *Results: Indexing __gameId__*
-**Top 10% of DB: completed in about 0.8 ms**
-**Whole DB: completed in about 0.8 ms**
+####### Results: Indexing __gameId__
+- Top 10% of DB: completed in about 0.8 ms**
+- Whole DB: completed in about 0.8 ms**
 
-####### *Results: Indexing __gameId__ & __posted__*
-**Top 10% of DB: completed in about 0.7 ms**
-**Whole DB: completed in about 0.7 ms**
+####### Results: Indexing __gameId__ & __posted__
+- Top 10% of DB: completed in about 0.7 ms
+- Whole DB: completed in about 0.7 ms
 
-``` sql
+```sql
 # wanted to test what the query time would be without having the gameId individually indexed…
 DROP INDEX reviewstable_gameid_idx;
 ```
-####### *Results: Indexing __gameId__ & __posted__ (after dropping __gameId__) - WINNER!*
-**Top 10% of DB: completed in about 0.68 ms**
-**Whole DB: completed in about 0.68 ms**
+####### Results: Indexing __gameId__ & __posted__ (after dropping __gameId__)
+- Top 10% of DB: completed in about 0.68 ms
+- Whole DB: completed in about 0.68 ms
 
 ###### 3.2. Querying Cassandra
 Goal: optimizing the DB until a query to the most recent 10% of the database finishes in under 50ms:
@@ -277,25 +284,25 @@ CLUSTERING COLUMN: allows us to efficiently sort via `ORDER BY` (ascending or de
 In order to allow filtering by most recent id we must end each query with  —> `$ ALLOW FILTERING`
 
 The following are the two queries that I will be testing, because they are the queries in my API that will need to return the most records:
-``` sql
+```sql
 # Querying the Top 10% of DB only
 SELECT * FROM reviewsTable WHERE gameId = 1 AND id > 9000000 ORDER BY posted DESC LIMIT 45 ALLOW FILTERING;
 # id > 9000000 === most recent 10% of database
 ```
-``` sql
+
+```sql
 # Querying the Whole DB
 SELECT * FROM reviewsTable WHERE gameId = 1 ORDER BY posted DESC LIMIT 45;
 ```
 
-####### *Results*
-**Top 10% of DB: completed in about 1.7 ms**
-**Whole DB - first query: completed in about 18.2 ms**
-**Whole DB - subsequent queries: completed in about 1.3 ms**
+####### Results
+- Top 10% of DB: completed in about 1.7 ms
+- Whole DB - first query: completed in about 18.2 ms
+- Whole DB - subsequent queries: completed in about 1.3 ms
 
-####### *Results: Indexing __Id__*
-**Top 10% of DB: completed in about 1.4 ms**
-**Whole DB: completed in about 1.4 ms**
-
+####### Results: Indexing __Id__
+- Top 10% of DB: completed in about 1.4 ms
+- Whole DB: completed in about 1.4 ms
 
 
 ### 4. DEPLOYMENT
@@ -304,7 +311,7 @@ When deploying, we have to ensure that each EC2 instance has the correct Securit
 Finding each step necessary to install dependencies, configure, and deploy to EC2 was an interesting challenge. Here are the steps I took to get everything working:
 
 From a terminal window, `cd` into the directory with the AWS `.pem` file, then…
-``` sh
+```sh
 $~ ssh -i <.pem filename> <ec2user@ url to amazon ec2 instance>
 $~ yes
 $~ sudo yum update -y
@@ -333,24 +340,24 @@ $~ sudo locate pg_hba.conf
 $~ sudo vi /var/lib/pgsql/data/pg_hba.conf
 ```
 At bottom of the file change ident’s => md5 to allow for password authentication. It should look like this:
-![pg_hba.conf](https://imgur.com/a/kicK8Bt)
+![pg_hba](https://imgur.com/a/kicK8Bt)
 
-``` sh
+```sh
 $~ sudo locate postgresql.conf
 # to find other config file
 $~ sudo vim /var/lib/pgsql/data/postgresql.conf
 ```
 Under “Connection Settings” change the listen address and the port, which may also need to be uncommented, like this:
-![postgresql.conf](https://imgur.com/a/9jFlNLC)
+![postgresql](https://imgur.com/a/9jFlNLC)
 
-``` sh
+```sh
 sudo service postgresql restart
 # restart postgres so changes take effect 
 $~ sudo -u postgres psql
 # enter the psql shell
 ```
 
-``` sql
+```sql
 \password
 # enter password twice
 CREATE USER power_user SUPERUSER;
@@ -368,7 +375,7 @@ Now we can begin to populate our database using the seed scripts. Whew!
 Deploying the service and proxy were relatively simple on EC2 compared to the prior process. Here are the steps I took to get everything working:
 
 From a terminal window, `cd` into the directory with the AWS `.pem` file, then…
-``` sh
+```sh
 $~ ssh -i <.pem filename> <ec2user@ url to amazon ec2 instance>
 $~ yes
 $~ sudo yum update -y
@@ -392,19 +399,19 @@ Then, start the server with the npm start script. Done!
 ###### 4.3 Detach Screen
 I was running into an issue where my EC2 server instance would disconnect as soon as I closed my terminal window. 
 Linux `Screen` is a command that allows us to keep processes running despite a dropped connection. Type
-``` sh
+```sh
 $~ screen
 ```
 Then, connect to the server through this “screen.”  To leave the connection running and continue to work in the shell, we must detach from the screen by typing:
 `control + A + D`
 
 Now, we can view the screens with the command:
-``` sh
+```sh
 $~ screen -ls
 ```
 
 To reconnect to a `screen`, type the following with the name of the screen:
-``` sh
+```sh
 $~ screen -r <screenName>
 ```
 
@@ -415,11 +422,11 @@ There we can see the processes that are still running in the background. We can 
 ###### 5.1 Configuring Redis
 
 After getting Redis installed, we can configure it for optimal performance in our environment. To find the config file:
-``` sh
+```sh
 $~ sudo find / -name "redis.conf"
 ```
 Then, open the file with VIM:
-``` sh
+```sh
 $~ sudo vi /usr/local/src/redis-stable/redis.conf
 ``` 
 
@@ -433,11 +440,11 @@ Here are some of the configurations options that I modified. There is still much
 - appendfsync
 
 To run Redis with the default config:
-``` sh
+```sh
 $~ redis-server
 ```
 To run Redis with the updated config file options:
-``` sh
+```sh
 $~ redis-server /usr/local/src/redis-stable/redis.conf
 ```
 
@@ -532,23 +539,24 @@ GET Requests were made at random to 100,000 of the GameId pages
 { 1500 RPS was the highest my Server could handle responding to both before and after optimization }
 
 ####### Before Optimization:
-GET 10 RPS - avg. 227ms
-GET 100 RPS - avg. 224ms
-GET 1000 RPS - avg. 230ms
-GET 1500 RPS - avg. 1508ms (performance greatly wained from here up)
+- GET 10 RPS - avg. 227ms
+- GET 100 RPS - avg. 224ms
+- GET 1000 RPS - avg. 230ms
+- GET 1500 RPS - avg. 1508ms (performance greatly wained from here up)
 
 ####### After Server-Side Rendering the HTML:
-GET 10 RPS - avg. 126ms (101 ms Better!)
-GET 100 RPS - avg. 124ms (100 ms Better!)
-GET 1000 RPS - avg. 1901ms (worse)
-GET 1500 RPS - avg. 2943ms (worse)
+- GET 10 RPS - avg. 126ms (101 ms Better!)
+- GET 100 RPS - avg. 124ms (100 ms Better!)
+- GET 1000 RPS - avg. 1901ms (worse)
+- GET 1500 RPS - avg. 2943ms (worse)
 
 (extra tests on the SSR)
-GET 750 RPS - avg. 137ms (still very good!)
-GET 800 RPS - avg. 216ms 
+- GET 750 RPS - avg. 137ms (still very good!)
+- GET 800 RPS - avg. 216ms 
 
 On the SSR’d page, *GET 800 RPS* was the point at which the performance matched the non-SSR’d page and above which started to perform worse.
 Given additional resources of time and money it appears that horizontal scaling and load balancing would be the solution. I believe that the reason that it started to perform worse was due to my single server trying to read and stringify the HTML page more than 800x per second. When it slowed, I started to see this error pop up repeatedly in the console: `Error: EMFILE: too many open files, open ‘index.html’`
 
 I am very happy with the initial performance boost of SSR, plus the opportunity to learn how it is done.
+
 :grinning: :thumbsup:

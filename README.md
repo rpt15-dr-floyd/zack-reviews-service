@@ -13,32 +13,32 @@
 ## Table of Contents
 <!-- TOC -->
 
-- [1. DATABASE 1 - PostgreSQL]
-  - [1.1 PostgreSQL installation]
-  - [1.2 Run PostgreSQL]
-  - [1.3 PostgreSQL Schema]
-  - [1.4 Populating PostgreSQL DB]
-- [2. DATABASE 2 - Cassandra]
-  - [2.1 Cassandra installation]
-  - [2.2 Run Cassandra]
-  - [2.3 Cassandra Schema]
-  - [2.4 Populating Cassandra DB]
-- [3. DBMS Benchmarking & Performance]
-  - [3.1. Querying PostgreSQL]
-  - [3.2. Querying Cassandra]
-- [4. DEPLOYMENT]
-  - [4.1. Deploying PostgreSQL]
-  - [4.2. Deploying Microservice & Proxy Server]
-  - [4.3. Detach Screen]
-- [5. OPTIMIZATION 1: Redis (cache)]
-  - [5.1. Configuring Redis]
-  - [5.2. Load Testing - Redis]
-- [6. OPTIMIZATION 2: Server-Side Rendering (SSR)]
-  - [6.1. Options & Challenges]
-  - [6.2. Load Testing SSR HTML]
+- [1. DATABASE 1 - PostgreSQL](#1)
+  - [1.1. PostgreSQL installation](#11)
+  - [1.2. Run PostgreSQL](#12)
+  - [1.3. PostgreSQL Schema](#13)
+  - [1.4. Populating PostgreSQL DB](#14)
+- [2. DATABASE 2 - Cassandra](#2)
+  - [2.1. Cassandra installation](#21)
+  - [2.2. Run Cassandra](#22)
+  - [2.3. Cassandra Schema](#23)
+  - [2.4. Populating Cassandra DB](#24)
+- [3. DBMS Benchmarking & Performance](#3)
+  - [3.1. Querying PostgreSQL](#31)
+  - [3.2. Querying Cassandra](#32)
+- [4. DEPLOYMENT](#4)
+  - [4.1. Deploying PostgreSQL](#41)
+  - [4.2. Deploying Microservice & Proxy Server](#42)
+  - [4.3. Detach Screen](#43)
+- [5. OPTIMIZATION 1: Redis (cache)](#5)
+  - [5.1. Configuring Redis](#51)
+  - [5.2. Load Testing - Redis](#52)
+- [6. OPTIMIZATION 2: Server-Side Rendering (SSR)](#6)
+  - [6.1. Options & Challenges](#61)
+  - [6.2. Load Testing SSR HTML](#62)
 
 ### 1. DATABASE 1 - PostgreSQL
-###### 1.1 PostgreSQL installation
+###### 1.1. PostgreSQL installation
 [Postgres.app](https://postgresapp.com/)
 
 To more easily access Postgres commands from the terminal, we must add this line to `~/.bash_profile` or `~/.zshrc` (in in the case of having `Z Shell` installed) to tell the terminal where the bin folder of the Postgres.app lives.
@@ -53,12 +53,12 @@ export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/11/bin
 $~ source .zshrc
 ```
 
-###### 1.2 Run PostgreSQL
+###### 1.2. Run PostgreSQL
 ```sh
-$~ **psql**
+$~ psql
 ```
 
-###### 1.3 PostgreSQL Schema
+###### 1.3. PostgreSQL Schema
 I created a schema file ending with `.sql`, which allows VSCode to recognize the syntax as SQL. In the schema: 
 ```sql
 CREATE databaseName;
@@ -83,7 +83,7 @@ Then load into PostgreSQL with this command:
 $~ **psql** -f schemaFile.sql
 ```
 
-###### 1.4 Populating PostgreSQL DB
+###### 1.4. Populating PostgreSQL DB
 ```sh
 $~ npm i -s pg 
 # (i === install, -s === -save)
@@ -147,7 +147,7 @@ shelljs.exec(‘node queryFile.js’, () => {
 This seed script completed 10M records in about 44 minutes.
 
 ### 2. DATABASE 2 - Cassandra
-###### 2.1 Cassandra installation
+###### 2.1. Cassandra installation
 Java version 13 didn’t play nice with Cassandra 3.11.4, so I installed the known-compatible Java version 8.0_221.
 
 Then, we must add this line to `~/.bash_profile` or `~/.zshrc` (in in the case of having `Z Shell` installed) to change default java to 8.
@@ -163,7 +163,7 @@ export PATH=$PATH:/usr/local/cassandra/bin
 $~ source .zshrc
 ```
 
-###### 2.2 Run Cassandra 
+###### 2.2. Run Cassandra 
 ```sh
 # terminal
 $~ cassandra
@@ -174,7 +174,7 @@ If Cassandra and Java are installed and compatible together a long message will 
 $~ **cqlsh**
 ```
 
-###### 2.3 Cassandra Schema
+###### 2.3. Cassandra Schema
 Because Cassandra’s syntax is so similar to SQL, I created a schema file ending with `.sql`, (just like before) which allows VSCode to recognize most of the necessary syntax as SQL. This schema went through a few iterations before landing here (see [3.2. Querying Cassandra] below). Within this file, we can set the initial parameters for setup including the KEYSPACE (Cassandra’s equivalent to an SQL database), TABLE definitions with COLUMN names DATA TYPES and PRIMARY KEY(s). 
 
 ```sql
@@ -199,7 +199,7 @@ Then load into Cassandra with this command:
 $~ **cqlsh** -f schemaFile.sql
 ```
 
-###### 2.4 Populating Cassandra DB
+###### 2.4. Populating Cassandra DB
 ```sh
 $~ npm i -s cassandra-driver
 ```
@@ -250,11 +250,11 @@ SELECT * FROM reviewsTable WHERE gameId = 1 ORDER BY posted DESC LIMIT 45;
 - Top 10% of DB: completed in about 285 ms
 - Whole DB: completed in about 15 seconds!
 
-####### Results: Indexing __gameId__
+####### Results: Indexing gameId
 - Top 10% of DB: completed in about 0.8 ms**
 - Whole DB: completed in about 0.8 ms**
 
-####### Results: Indexing __gameId__ & __posted__
+####### Results: Indexing gameId & posted
 - Top 10% of DB: completed in about 0.7 ms
 - Whole DB: completed in about 0.7 ms
 
@@ -262,7 +262,7 @@ SELECT * FROM reviewsTable WHERE gameId = 1 ORDER BY posted DESC LIMIT 45;
 # wanted to test what the query time would be without having the gameId individually indexed…
 DROP INDEX reviewstable_gameid_idx;
 ```
-####### Results: Indexing __gameId__ & __posted__ (after dropping __gameId__)
+####### Results: Indexing gameId & posted (after dropping gameId)
 - Top 10% of DB: completed in about 0.68 ms
 - Whole DB: completed in about 0.68 ms
 
@@ -275,7 +275,7 @@ Cassandra has many more restrictions than Postgres in terms of the allowable que
 Without specifying PARTITION KEYs and CLUSTERING COLUMNs in Cassandra, it is not possible to query a DB of 10Million with efficacy.
 So, I rewrote the schema to be different from that of PostgreSQL. See [2.3 Cassandra Schema] above.
 
-PARTITION KEY: allows us to efficiently filter by an =.
+PARTITION KEY: allows us to efficiently filter by an =
   e.g. `WHERE gameId = 1`
 
 CLUSTERING COLUMN: allows us to efficiently sort via `ORDER BY` (ascending or descending).
@@ -300,13 +300,13 @@ SELECT * FROM reviewsTable WHERE gameId = 1 ORDER BY posted DESC LIMIT 45;
 - Whole DB - first query: completed in about 18.2 ms
 - Whole DB - subsequent queries: completed in about 1.3 ms
 
-####### Results: Indexing __Id__
+####### Results: Indexing Id
 - Top 10% of DB: completed in about 1.4 ms
 - Whole DB: completed in about 1.4 ms
 
 
 ### 4. DEPLOYMENT
-###### 4.1 Deploying PostgreSQL
+###### 4.1. Deploying PostgreSQL
 When deploying, we have to ensure that each EC2 instance has the correct Security Group settings for `Inbound Rules` that will allow for incoming connections from the correct IP’s and Port numbers.
 Finding each step necessary to install dependencies, configure, and deploy to EC2 was an interesting challenge. Here are the steps I took to get everything working:
 
@@ -371,7 +371,7 @@ CREATE TABLE <enter schema here>
 
 Now we can begin to populate our database using the seed scripts. Whew!
 
-###### 4.2 Deploying Microservice & Proxy Server
+###### 4.2. Deploying Microservice & Proxy Server
 Deploying the service and proxy were relatively simple on EC2 compared to the prior process. Here are the steps I took to get everything working:
 
 From a terminal window, `cd` into the directory with the AWS `.pem` file, then…
@@ -396,7 +396,7 @@ $~ npm i
 ```
 Then, start the server with the npm start script. Done!
 
-###### 4.3 Detach Screen
+###### 4.3. Detach Screen
 I was running into an issue where my EC2 server instance would disconnect as soon as I closed my terminal window. 
 Linux `Screen` is a command that allows us to keep processes running despite a dropped connection. Type
 ```sh
@@ -419,7 +419,7 @@ There we can see the processes that are still running in the background. We can 
 [More info about the Linux Screen](https://www.howtoforge.com/linux_screen)
 
 ### 5. OPTIMIZATION 1: Redis (cache)
-###### 5.1 Configuring Redis
+###### 5.1. Configuring Redis
 
 After getting Redis installed, we can configure it for optimal performance in our environment. To find the config file:
 ```sh
@@ -450,8 +450,8 @@ $~ redis-server /usr/local/src/redis-stable/redis.conf
 
 Testing with and without the config modifications, I was able to see slight improvements with the config file modified.  So, I used the config file when I ran the Redis load tests below.
 
-###### 5.2 Load Testing - Redis
-Load tests were run with [Loader.io] (https://loader.io/)
+###### 5.2. Load Testing - Redis
+Load tests were run with [Loader.io](https://loader.io/)
 
 GET Requests made to a range of 3,000 GameId pages selected at random (querying the Postgres DB of 10M+)
 
@@ -483,7 +483,7 @@ Redis only helped performance - no downside was observed in this configuration. 
 
 
 ### 6. OPTIMIZATION 2: Server-Side Rendering (SSR)
-###### 6.1 Options & Challenges
+###### 6.1. Options & Challenges
 In a React app, the first requirement to SSR is getting the app on the server so that it’s content can be read and attached to the HTML page, stringified, and then sent to the client.
 However, React is written in ES6 syntax with the keyword `import` which Node.js (written in ES5 with the keyword `require`) doesn’t understand out of the box. To allow Node to read ES6, the server code must be re-written with ES6 `import` statements and compiled with `Babel` before the server is started. < Babel converts the ES6 to ES5 >
 
@@ -532,8 +532,8 @@ One more note:
 I was originally setting the state of the gameId with `window.location.pathname.split(‘/‘)[1]`, but due to the order of operations, I had to wait for the component to mount before we had access to the window object, because I can’t stringify a window value on the server that doesn’t exist yet. So, I moved that to `this.setState()` within `componentDidMount()`.
 
 
-###### 6.2 Load Testing SSR HTML
-Load tests were run with [Loader.io] (https://loader.io/)
+###### 6.2. Load Testing SSR HTML
+Load tests were run with [Loader.io](https://loader.io/)
 
 GET Requests were made at random to 100,000 of the GameId pages
 { 1500 RPS was the highest my Server could handle responding to both before and after optimization }

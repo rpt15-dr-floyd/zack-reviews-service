@@ -13,28 +13,28 @@
 ## Table of Contents
 <!-- TOC -->
 
-- [1. DATABASE 1 PostgreSQL](#1-database-1:-postgresql)
+- [1. DATABASE 1 PostgreSQL](#1-database-1-postgresql)
   - [1.1. PostgreSQL Installation](#11-postgresql-installation)
   - [1.2. Run PostgreSQL](#12-run-postgresql)
   - [1.3. PostgreSQL Schema](#13-postgresql-schema)
   - [1.4. Populating PostgreSQL DB](#14-populating-postgresql-db)
-- [2. DATABASE 2: Cassandra](#2-database-2:-cassandra)
+- [2. DATABASE 2 Cassandra](#2-database-2-cassandra)
   - [2.1. Cassandra installation](#21-cassandra-installation)
   - [2.2. Run Cassandra](#22-run-cassandra)
   - [2.3. Cassandra Schema](#23-cassandra-schema)
   - [2.4. Populating Cassandra DB](#24-populating-cassandra-db)
-- [3. DBMS Benchmarking & Performance](#3-dbms-benchmarking-&-performance)
+- [3. DBMS Benchmarking and Performance](#3-dbms-benchmarking-and-performance)
   - [3.1. Querying PostgreSQL](#31-querying-postgresql)
   - [3.2. Querying Cassandra](#32-querying-cassandra)
 - [4. DEPLOYMENT](#4-deployment)
   - [4.1. Deploying PostgreSQL](#41-deploying-postgresql)
-  - [4.2. Deploying Microservice & Proxy Server](#42-deploying-microservice-&-proxy-server)
+  - [4.2. Deploying Microservice and Proxy Server](#42-deploying-microservice-and-proxy-server)
   - [4.3. Detach Screen](#43-detach-screen)
-- [5. OPTIMIZATION 1: Redis](#5-optimization-1:-redis)
+- [5. OPTIMIZATION 1 Redis](#5-optimization-1-redis)
   - [5.1. Configuring Redis](#51-configuring-redis)
   - [5.2. Load Testing Redis](#52-load-testing-redis)
-- [6. OPTIMIZATION 2: Server Side Rendering](#6-optimization-2:-server-side-rendering)
-  - [6.1. Options & Challenges](#61-options-&-challenges)
+- [6. OPTIMIZATION 2 Server Side Rendering](#6-optimization-2-server-side-rendering)
+  - [6.1. Options and Challenges](#61-options-and-challenges)
   - [6.2. Load Testing SSR HTML](#62-load-testing-ssr-html)
 
 ## 1. DATABASE 1: PostgreSQL
@@ -147,26 +147,25 @@ shelljs.exec(‘node queryFile.js’, () => {
 2500 calls of 4000 === 10 Million
 This seed script completed 10M records in about 44 minutes.
 
-## 2. DATABASE 2: Cassandra
+## 2. DATABASE 2 Cassandra
 #### 2.1. Cassandra Installation
 Java version 13 didn’t play nice with Cassandra 3.11.4, so I installed the known-compatible Java version 8.0_221.
 
 Then, we must add this line to `~/.bash_profile` or `~/.zshrc` (in in the case of having `Z Shell` installed) to change default java to 8.
 ```sh
-# terminal
 $~ open .zshrc
+```
 
-# add the following 2 lines to .zshrc
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_221.jdk/Contents/Home
-export PATH=$PATH:/usr/local/cassandra/bin
+Add the following 2 lines to .zshrc
+`export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_221.jdk/Contents/Home`
+`export PATH=$PATH:/usr/local/cassandra/bin`
 
-# terminal
+```sh
 $~ source .zshrc
 ```
 
 #### 2.2. Run Cassandra 
 ```sh
-# terminal
 $~ cassandra
 ```
 If Cassandra and Java are installed and compatible together a long message will ensue, ending with several lines of “INFO …”
@@ -176,7 +175,7 @@ $~ cqlsh
 ```
 
 #### 2.3. Cassandra Schema
-Because Cassandra’s syntax is so similar to SQL, I created a schema file ending with `.sql`, (just like before) which allows VSCode to recognize most of the necessary syntax as SQL. This schema went through a few iterations before landing here (see [3.2. Querying Cassandra] below). Within this file, we can set the initial parameters for setup including the KEYSPACE (Cassandra’s equivalent to an SQL database), TABLE definitions with COLUMN names DATA TYPES and PRIMARY KEY(s). 
+Because Cassandra’s syntax is so similar to SQL, I created a schema file ending with `.sql`, (just like before) which allows VSCode to recognize most of the necessary syntax as SQL. This schema went through a few iterations before landing here - see [3.2. Querying Cassandra](#32-querying-cassandra) below. Within this file, we can set the initial parameters for setup including the KEYSPACE (Cassandra’s equivalent to an SQL database), TABLE definitions with COLUMN names DATA TYPES and PRIMARY KEY(s). 
 
 ```sql
 CREATE KEYSPACE databaseName WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3};
@@ -214,7 +213,7 @@ Then I found the syntax to group many queries into one: `BEGIN UNLOGGED BATCH`, 
 
 
 
-## 3. DBMS Benchmarking & Performance
+## 3. DBMS Benchmarking and Performance
 #### 3.1. Querying PostgreSQL
 
 Goal: optimizing the DB until a query to the most recent 10% of the database finishes in under 50ms:
@@ -223,7 +222,8 @@ This allows us to view the query times in milliseconds after execution completes
 
 After testing some basic queries within `psql` the results are taking anywhere from 10-30 seconds (sifting thru 10M records), so I must optimize.
 
-*Indexing to the rescue*
+__*Indexing to the rescue*__
+
 An index is a key:value store, that will cut query times down significantly. This is possible because instead of querying the entire DB (like in the first example) we get to each id by nature of key:value sequential sorting in a binary tree structure, which is very fast!
 
 Not only can we index individual columns, but even by groups of relevant columns. e.g. I want to search for a specific gameId, within a certain range of id values, ordered by posted (date) descending. So my 3 values to consider for indexing are gameId, id, & posted, but because id is the `PRIMARY KEY` it is already indexed:
@@ -274,7 +274,7 @@ This allows us to view the query times in *micro*seconds after execution complet
 
 Cassandra has many more restrictions than Postgres in terms of the allowable queries. The tables have to be configured to accept the specific queries needed for the API.
 Without specifying PARTITION KEYs and CLUSTERING COLUMNs in Cassandra, it is not possible to query a DB of 10Million with efficacy.
-So, I rewrote the schema to be different from that of PostgreSQL. See [2.3 Cassandra Schema] above.
+So, I rewrote the schema to be different from that of PostgreSQL. See [2.3 Cassandra Schema](#23-cassandra-schema) above.
 
 PARTITION KEY: allows us to efficiently filter by an =
   e.g. `WHERE gameId = 1`
@@ -282,7 +282,7 @@ PARTITION KEY: allows us to efficiently filter by an =
 CLUSTERING COLUMN: allows us to efficiently sort via `ORDER BY` (ascending or descending).
   e.g. `ORDER BY posted DESC`
 
-In order to allow filtering by most recent id we must end each query with  —> `$ ALLOW FILTERING`
+In order to allow filtering by most recent id we must end each query with  —> `ALLOW FILTERING`
 
 The following are the two queries that I will be testing, because they are the queries in my API that will need to return the most records:
 ```sql
@@ -372,7 +372,7 @@ CREATE TABLE <enter schema here>
 
 Now we can begin to populate our database using the seed scripts. Whew!
 
-#### 4.2. Deploying Microservice & Proxy Server
+#### 4.2. Deploying Microservice and Proxy Server
 Deploying the service and proxy were relatively simple on EC2 compared to the prior process. Here are the steps I took to get everything working:
 
 From a terminal window, `cd` into the directory with the AWS `.pem` file, then…
@@ -419,7 +419,7 @@ $~ screen -r <screenName>
 There we can see the processes that are still running in the background. We can have multiple screens running on one instance, which is how I set up a Redis-Server and Node.js server on the same instance.
 [More info about the Linux Screen](https://www.howtoforge.com/linux_screen)
 
-## 5. OPTIMIZATION 1: Redis
+## 5. OPTIMIZATION 1 Redis
 #### 5.1. Configuring Redis
 
 After getting Redis installed, we can configure it for optimal performance in our environment. To find the config file:
@@ -432,15 +432,12 @@ Then, open the file with VIM:
 $~ sudo vi /usr/local/src/redis-stable/redis.conf
 ``` 
 
-Here are some of the configurations options that I modified.
+Here are some of the configurations options that I experimented with.
 There is still much more to learn about how to maximize Redis’s performance:
-- tcp-backlog
-- databases
-- maxclients
-- maxmemory
-- maxmemory-policy
-- maxmemory-samples
-- appendfsync
+- maxmemory (800000 = 800MB, because t2.micro has 1GB and I wanted to save 20% for Node Server)
+- maxmemory-policy (LRU = Least Recently Used)
+- maxmemory-samples (decreasing the sample size gives an increase in processing speed)
+- appendfsync (set to "no" so as not to use resources)
 
 To run Redis with the default config:
 ```sh
@@ -490,8 +487,8 @@ I tested this Redis config over 5,000 randomly selected Game Id's in 4 consecuti
 Redis only helped performance - no downside was observed in this configuration. However, a better way to use Redis would be to install it on the database’s EC2, or even better its own dedicated EC2 instance. This would allow Redis full access to the processing power of one instance without competing for CPU with the server or DB.
 
 
-## 6. OPTIMIZATION 2: Server Side Rendering
-#### 6.1. Options & Challenges
+## 6. OPTIMIZATION 2 Server Side Rendering
+#### 6.1. Options and Challenges
 In a React app, the first requirement to SSR is getting the app on the server so that it’s content can be read and attached to the HTML page, stringified, and then sent to the client.
 However, React is written in ES6 syntax with the keyword `import` which Node.js (written in ES5 with the keyword `require`) doesn’t understand out of the box. To allow Node to read ES6, the server code must be re-written with ES6 `import` statements and compiled with `Babel` before the server is started. < Babel converts the ES6 to ES5 >
 
@@ -565,6 +562,8 @@ GET Requests were made at random to 100,000 of the GameId pages
 On the SSR’d page, *GET 800 RPS* was the point at which the performance matched the non-SSR’d page and above which started to perform worse.
 Given additional resources of time and money it appears that horizontal scaling and load balancing would be the solution. I believe that the reason that it started to perform worse was due to my single server trying to read and stringify the HTML page more than 800x per second. When it slowed, I started to see this error pop up repeatedly in the console: `Error: EMFILE: too many open files, open ‘index.html’`
 
-I am very happy with the initial performance boost of SSR, plus the opportunity to learn how it is done.
+I am very pleased with the initial performance boost of SSR, plus the opportunity to work through the challenges and learn how it's done.
+
+Happy coding!
 
 :grinning: :thumbsup:

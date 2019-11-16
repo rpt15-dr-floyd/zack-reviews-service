@@ -13,7 +13,7 @@
 ## Table of Contents
 <!-- TOC -->
 
-- [1. DATABASE 1 - PostgreSQL](#1)
+- [1. DATABASE 1 PostgreSQL](#1-database-1-postgresql)
   - [1.1. PostgreSQL installation](#11)
   - [1.2. Run PostgreSQL](#12)
   - [1.3. PostgreSQL Schema](#13)
@@ -37,8 +37,8 @@
   - [6.1. Options & Challenges](#61)
   - [6.2. Load Testing SSR HTML](#62)
 
-### 1. DATABASE 1 - PostgreSQL
-###### 1.1. PostgreSQL installation
+## 1. DATABASE 1 PostgreSQL
+#### 1.1. PostgreSQL installation
 [Postgres.app](https://postgresapp.com/)
 
 To more easily access Postgres commands from the terminal, we must add this line to `~/.bash_profile` or `~/.zshrc` (in in the case of having `Z Shell` installed) to tell the terminal where the bin folder of the Postgres.app lives.
@@ -53,12 +53,12 @@ export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/11/bin
 $~ source .zshrc
 ```
 
-###### 1.2. Run PostgreSQL
+#### 1.2. Run PostgreSQL
 ```sh
 $~ psql
 ```
 
-###### 1.3. PostgreSQL Schema
+#### 1.3. PostgreSQL Schema
 I created a schema file ending with `.sql`, which allows VSCode to recognize the syntax as SQL. In the schema: 
 ```sql
 CREATE databaseName;
@@ -83,7 +83,7 @@ Then load into PostgreSQL with this command:
 $~ **psql** -f schemaFile.sql
 ```
 
-###### 1.4. Populating PostgreSQL DB
+#### 1.4. Populating PostgreSQL DB
 ```sh
 $~ npm i -s pg 
 # (i === install, -s === -save)
@@ -146,8 +146,8 @@ shelljs.exec(‘node queryFile.js’, () => {
 2500 calls of 4000 === 10 Million
 This seed script completed 10M records in about 44 minutes.
 
-### 2. DATABASE 2 - Cassandra
-###### 2.1. Cassandra installation
+## 2. DATABASE 2 - Cassandra
+#### 2.1. Cassandra installation
 Java version 13 didn’t play nice with Cassandra 3.11.4, so I installed the known-compatible Java version 8.0_221.
 
 Then, we must add this line to `~/.bash_profile` or `~/.zshrc` (in in the case of having `Z Shell` installed) to change default java to 8.
@@ -163,7 +163,7 @@ export PATH=$PATH:/usr/local/cassandra/bin
 $~ source .zshrc
 ```
 
-###### 2.2. Run Cassandra 
+#### 2.2. Run Cassandra 
 ```sh
 # terminal
 $~ cassandra
@@ -174,7 +174,7 @@ If Cassandra and Java are installed and compatible together a long message will 
 $~ **cqlsh**
 ```
 
-###### 2.3. Cassandra Schema
+#### 2.3. Cassandra Schema
 Because Cassandra’s syntax is so similar to SQL, I created a schema file ending with `.sql`, (just like before) which allows VSCode to recognize most of the necessary syntax as SQL. This schema went through a few iterations before landing here (see [3.2. Querying Cassandra] below). Within this file, we can set the initial parameters for setup including the KEYSPACE (Cassandra’s equivalent to an SQL database), TABLE definitions with COLUMN names DATA TYPES and PRIMARY KEY(s). 
 
 ```sql
@@ -199,7 +199,7 @@ Then load into Cassandra with this command:
 $~ **cqlsh** -f schemaFile.sql
 ```
 
-###### 2.4. Populating Cassandra DB
+#### 2.4. Populating Cassandra DB
 ```sh
 $~ npm i -s cassandra-driver
 ```
@@ -213,8 +213,8 @@ Then I found the syntax to group many queries into one: `BEGIN UNLOGGED BATCH`, 
 
 
 
-### 3. DBMS Benchmarking & Performance
-###### 3.1. Querying PostgreSQL
+## 3. DBMS Benchmarking & Performance
+#### 3.1. Querying PostgreSQL
 
 Goal: optimizing the DB until a query to the most recent 10% of the database finishes in under 50ms:
 Turn on “timing” within psql —> `\timing`
@@ -233,7 +233,7 @@ CREATE INDEX ON reviewsTable (posted);
 CREATE INDEX ON reviewsTable (gameId, posted);
 ```
 
-###### Results
+##### Results
 The following are the two queries that I will be testing, because they are the queries in my API that will need to return the most records:
 ```sql
 # Querying the Top 10% of DB only
@@ -246,15 +246,15 @@ SELECT * FROM reviewsTable WHERE gameId = 1 AND id > 9000000 ORDER BY posted DES
 SELECT * FROM reviewsTable WHERE gameId = 1 ORDER BY posted DESC LIMIT 45;
 ```
 
-####### Results: Pre-Indexing
+##### Results: Pre-Indexing
 - Top 10% of DB: completed in about 285 ms
 - Whole DB: completed in about 15 seconds!
 
-####### Results: Indexing gameId
+##### Results: Indexing gameId
 - Top 10% of DB: completed in about 0.8 ms**
 - Whole DB: completed in about 0.8 ms**
 
-####### Results: Indexing gameId & posted
+##### Results: Indexing gameId & posted
 - Top 10% of DB: completed in about 0.7 ms
 - Whole DB: completed in about 0.7 ms
 
@@ -262,11 +262,11 @@ SELECT * FROM reviewsTable WHERE gameId = 1 ORDER BY posted DESC LIMIT 45;
 # wanted to test what the query time would be without having the gameId individually indexed…
 DROP INDEX reviewstable_gameid_idx;
 ```
-####### Results: Indexing gameId & posted (after dropping gameId)
+##### Results: Indexing gameId & posted (after dropping gameId)
 - Top 10% of DB: completed in about 0.68 ms
 - Whole DB: completed in about 0.68 ms
 
-###### 3.2. Querying Cassandra
+#### 3.2. Querying Cassandra
 Goal: optimizing the DB until a query to the most recent 10% of the database finishes in under 50ms:
 Turn on “tracing” within cqlsh —> `$ TRACING ON`
 This allows us to view the query times in *micro*seconds after execution completes. The total execution time is viewed in the bottom row under the `source_elapsed` column of the `Tracing session`.
@@ -295,18 +295,18 @@ SELECT * FROM reviewsTable WHERE gameId = 1 AND id > 9000000 ORDER BY posted DES
 SELECT * FROM reviewsTable WHERE gameId = 1 ORDER BY posted DESC LIMIT 45;
 ```
 
-####### Results
+##### Results
 - Top 10% of DB: completed in about 1.7 ms
 - Whole DB - first query: completed in about 18.2 ms
 - Whole DB - subsequent queries: completed in about 1.3 ms
 
-####### Results: Indexing Id
+##### Results: Indexing Id
 - Top 10% of DB: completed in about 1.4 ms
 - Whole DB: completed in about 1.4 ms
 
 
-### 4. DEPLOYMENT
-###### 4.1. Deploying PostgreSQL
+## 4. DEPLOYMENT
+#### 4.1. Deploying PostgreSQL
 When deploying, we have to ensure that each EC2 instance has the correct Security Group settings for `Inbound Rules` that will allow for incoming connections from the correct IP’s and Port numbers.
 Finding each step necessary to install dependencies, configure, and deploy to EC2 was an interesting challenge. Here are the steps I took to get everything working:
 
@@ -340,7 +340,7 @@ $~ sudo locate pg_hba.conf
 $~ sudo vi /var/lib/pgsql/data/pg_hba.conf
 ```
 At bottom of the file change ident’s => md5 to allow for password authentication. It should look like this:
-![pg_hba](https://imgur.com/a/kicK8Bt)
+![pg_hba.conf](https://imgur.com/Mqun4N1)
 
 ```sh
 $~ sudo locate postgresql.conf
@@ -348,7 +348,7 @@ $~ sudo locate postgresql.conf
 $~ sudo vim /var/lib/pgsql/data/postgresql.conf
 ```
 Under “Connection Settings” change the listen address and the port, which may also need to be uncommented, like this:
-![postgresql](https://imgur.com/a/9jFlNLC)
+![postgresql.conf](https://imgur.com/BGaHobB)
 
 ```sh
 sudo service postgresql restart
@@ -371,7 +371,7 @@ CREATE TABLE <enter schema here>
 
 Now we can begin to populate our database using the seed scripts. Whew!
 
-###### 4.2. Deploying Microservice & Proxy Server
+#### 4.2. Deploying Microservice & Proxy Server
 Deploying the service and proxy were relatively simple on EC2 compared to the prior process. Here are the steps I took to get everything working:
 
 From a terminal window, `cd` into the directory with the AWS `.pem` file, then…
@@ -396,7 +396,7 @@ $~ npm i
 ```
 Then, start the server with the npm start script. Done!
 
-###### 4.3. Detach Screen
+#### 4.3. Detach Screen
 I was running into an issue where my EC2 server instance would disconnect as soon as I closed my terminal window. 
 Linux `Screen` is a command that allows us to keep processes running despite a dropped connection. Type
 ```sh
@@ -418,8 +418,8 @@ $~ screen -r <screenName>
 There we can see the processes that are still running in the background. We can have multiple screens running on one instance, which is how I set up a Redis-Server and Node.js server on the same instance.
 [More info about the Linux Screen](https://www.howtoforge.com/linux_screen)
 
-### 5. OPTIMIZATION 1: Redis (cache)
-###### 5.1. Configuring Redis
+## 5. OPTIMIZATION 1: Redis (cache)
+#### 5.1. Configuring Redis
 
 After getting Redis installed, we can configure it for optimal performance in our environment. To find the config file:
 ```sh
@@ -450,12 +450,12 @@ $~ redis-server /usr/local/src/redis-stable/redis.conf
 
 Testing with and without the config modifications, I was able to see slight improvements with the config file modified.  So, I used the config file when I ran the Redis load tests below.
 
-###### 5.2. Load Testing - Redis
+#### 5.2. Load Testing - Redis
 Load tests were run with [Loader.io](https://loader.io/)
 
 GET Requests made to a range of 3,000 GameId pages selected at random (querying the Postgres DB of 10M+)
 
-####### Before Optimization:
+##### Before Optimization
 **In 5 consecutive 30 sec runs.**
 Run 1. GET 300 RPS - avg. 7977ms fail
 Run 2. GET 300 RPS - avg. 5769ms
@@ -465,13 +465,13 @@ Run 5. GET 300 RPS - no improvement
 
 { 300 RPS was the highest my DB could handle responding to w/o optimizations }
 
-####### After Optimization:
+##### After Optimization
 **- Redis installed and configured on the Server EC2. Queried a fresh 3,000 Game Id's in 3 consecutive 30 sec runs.**
 Run 1. GET 300 RPS - avg. 7729ms fail
 Run 2. GET 300 RPS - avg. 1762ms
 Run 3. GET 300 RPS - avg. 64ms **best** *- fully cached*
 
-####### Additional Redis Stress Test:
+##### Additional Redis Stress Test
 500 RPS was about the highest I was able to handle with Redis installed (as opposed to barely 300 without).
 I tested this Redis config over 5,000 randomly selected Game Id's in 4 consecutive runs.
 Run 1. GET 500 RPS - avg. 7393ms fail
@@ -482,8 +482,8 @@ Run 4. GET 500 RPS - avg. 64ms **best** *- fully cached*
 Redis only helped performance - no downside was observed in this configuration. However, a better way to use Redis would be to install it on the database’s EC2, or even better its own dedicated EC2 instance. This would allow Redis full access to the processing power of one instance without competing for CPU with the server or DB.
 
 
-### 6. OPTIMIZATION 2: Server-Side Rendering (SSR)
-###### 6.1. Options & Challenges
+## 6. OPTIMIZATION 2: Server-Side Rendering (SSR)
+#### 6.1. Options & Challenges
 In a React app, the first requirement to SSR is getting the app on the server so that it’s content can be read and attached to the HTML page, stringified, and then sent to the client.
 However, React is written in ES6 syntax with the keyword `import` which Node.js (written in ES5 with the keyword `require`) doesn’t understand out of the box. To allow Node to read ES6, the server code must be re-written with ES6 `import` statements and compiled with `Babel` before the server is started. < Babel converts the ES6 to ES5 >
 
@@ -532,19 +532,19 @@ One more note:
 I was originally setting the state of the gameId with `window.location.pathname.split(‘/‘)[1]`, but due to the order of operations, I had to wait for the component to mount before we had access to the window object, because I can’t stringify a window value on the server that doesn’t exist yet. So, I moved that to `this.setState()` within `componentDidMount()`.
 
 
-###### 6.2. Load Testing SSR HTML
+#### 6.2. Load Testing SSR HTML
 Load tests were run with [Loader.io](https://loader.io/)
 
 GET Requests were made at random to 100,000 of the GameId pages
 { 1500 RPS was the highest my Server could handle responding to both before and after optimization }
 
-####### Before Optimization:
+##### Before Optimization
 - GET 10 RPS - avg. 227ms
 - GET 100 RPS - avg. 224ms
 - GET 1000 RPS - avg. 230ms
 - GET 1500 RPS - avg. 1508ms (performance greatly wained from here up)
 
-####### After Server-Side Rendering the HTML:
+##### After Server-Side Rendering the HTML
 - GET 10 RPS - avg. 126ms (101 ms Better!)
 - GET 100 RPS - avg. 124ms (100 ms Better!)
 - GET 1000 RPS - avg. 1901ms (worse)

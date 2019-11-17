@@ -38,7 +38,7 @@ function seedCQL(n) {
 
   client.execute(query, queryArgs, { prepare : true })
     .then(() => {
-      if (count < 2000) { // this produces 100,000 records
+      if (count < 2000) {
         seedCQL(n+50);
       } else {
         process.exit();

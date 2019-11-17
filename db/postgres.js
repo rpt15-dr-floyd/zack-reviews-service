@@ -88,5 +88,6 @@ function seed(numOfData) {
     .catch(err => console.log(err))
     .finally(() => pgClient.end())
 }
+seed(4000);
 
-seed(4000); // === 4 K --> the most records that can run at one time before array error occurs
+// === 4 K --> the most records that can run at one time before array error occurs

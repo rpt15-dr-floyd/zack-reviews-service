@@ -43,7 +43,6 @@
 
 To more easily access Postgres commands from the terminal, we must add this line to `~/.bash_profile` or `~/.zshrc` (in in the case of having `Z Shell` installed) to tell the terminal where the bin folder of the Postgres.app lives.
 ```sh
-# terminal
 $~ open .zshrc
 ```
 
@@ -81,7 +80,7 @@ I used:
 
 Then load into PostgreSQL with this command:
 ```sh
-$~ **psql** -f schemaFile.sql
+$~ psql -f schemaFile.sql
 ```
 
 #### 1.4. Populating PostgreSQL DB
@@ -204,6 +203,7 @@ $~ cqlsh -f schemaFile.sql
 $~ npm i -s cassandra-driver
 ```
 ![cassandra-driver](https://i.imgur.com/1KnvqpJ.png)
+
 With the `var client` setup, we can now access client.execute(); to make a query to the database. This returns a promise accessible through `.then()`. 
 
 _**Challenge: How do I get 10 Million records into Cassandra efficiently?**_
@@ -403,7 +403,7 @@ Linux `Screen` is a command that allows us to keep processes running despite a d
 ```sh
 $~ screen
 ```
-Then, connect to the server through this “screen.”  To leave the connection running and continue to work in the shell, we must detach from the screen by typing:
+Then, connect to the server through this `screen`.  To leave the connection running and continue to work in the shell, we must detach from the screen by typing:
 `control + A + D`
 
 Now, we can view the screens with the command:
@@ -430,7 +430,8 @@ $~ sudo find / -name "redis.conf"
 Then, open the file with VIM:
 ```sh
 $~ sudo vi /usr/local/src/redis-stable/redis.conf
-``` 
+
+```
 
 Here are some of the configurations options that I experimented with.
 There is still much more to learn about how to maximize Redis’s performance:
@@ -463,6 +464,8 @@ GET Requests made to a range of 3,000 GameId pages selected at random (querying 
 - Run 3. GET 300 RPS - avg. 3987ms
 - Run 4. GET 300 RPS - avg. 3247ms **best** 
 
+![get](https://i.imgur.com/a/nxIqE1V.png)
+
 *- the improvement in performance up to this point indicates that Postgres is doing a bit of caching on its own.*
 
 { 300 RPS was the highest my DB could handle responding to w/o optimizations }
@@ -474,6 +477,8 @@ GET Requests made to a range of 3,000 GameId pages selected at random (querying 
 - Run 3. GET 300 RPS - avg. 64ms **best** 
 *- fully cached*
 
+![getredis](https://i.imgur.com/a/F8zRp7A.png)
+
 ##### Additional Redis Stress Test
 500 RPS was about the highest I was able to handle with Redis installed (as opposed to barely 300 without).
 
@@ -484,13 +489,18 @@ I tested this Redis config over 5,000 randomly selected Game Id's in 4 consecuti
 - Run 4. GET 500 RPS - avg. 64ms **best**
 *- fully cached*
 
+![getredis500](https://i.imgur.com/a/DpWngpH.png)
+https://imgur.com/a/DpWngpH
+
 Redis only helped performance - no downside was observed in this configuration. However, a better way to use Redis would be to install it on the database’s EC2, or even better its own dedicated EC2 instance. This would allow Redis full access to the processing power of one instance without competing for CPU with the server or DB.
 
 
 ## 6. OPTIMIZATION 2 Server Side Rendering
 #### 6.1. Options and Challenges
 In a React app, the first requirement to SSR is getting the app on the server so that it’s content can be read and attached to the HTML page, stringified, and then sent to the client.
-However, React is written in ES6 syntax with the keyword `import` which Node.js (written in ES5 with the keyword `require`) doesn’t understand out of the box. To allow Node to read ES6, the server code must be re-written with ES6 `import` statements and compiled with `Babel` before the server is started. < Babel converts the ES6 to ES5 >
+However, React is written in ES6 syntax with the keyword `import` which Node.js (written in ES5 with the keyword `require`) doesn’t understand out of the box. To allow Node to read ES6, the server code must be re-written with ES6 `import` statements and compiled with `Babel` before the server is started. 
+
+< Babel converts the ES6 to ES5 >
 
 There are two ways that I discovered to accomplish this.
 1) Create a separate Webpack config for the server and compile it. Then, start the server with the Webpack compiled version the server file. This works well but created several extra steps and made the code base messier. In my case, I was looking for the simplest effective solution.
@@ -528,12 +538,14 @@ ReactDOM.hydrate(<App />, document.getElementById('reviews'));
 
 The lifecycle method `componentDidMount` will still fire off after the page loads. So, there are a few options for getting the data from the DB to the page.
 1) Query the data on the server, before the SSR and send it already attached the page. I experimented a lot with this method, and found its challenges. Because I was now passing props down to the App from within the server, if there were mismatches between props received there and those that were hydrated. In this case, we receive the error: `Warning: Text content did not match.` There were two workarounds that I discovered in the allowed time, neither of which were ideal. As time ran out, I was looking into door number 3.
-   a) Get the data twice (once on the server, and again when the page loads). This is obviously not a great idea for a large application, but it did produce the desired result.
-   b) Skip the hydration phase. Now this would only work if the page is completely static and can be 100% rendered on the server. It’s pretty unlikely that this will be useful in most cases.
-   c) What I wanted to do was - Conditionally send specific props through, so there’s no mismatch and no need for a 2nd API call on the client side.
+ - a) Get the data twice (once on the server, and again when the page loads). This is obviously not a great idea for a large application, but it did produce the desired result.
+ - b) Skip the hydration phase. Now this would only work if the page is completely static and can be 100% rendered on the server. It’s pretty unlikely that this will be useful in most cases.
+ - c) What I wanted to do was - Conditionally send specific props through, so there’s no mismatch and no need for a 2nd API call on the client side.
+
 2) Query the data after `componentDidMount`. This means that the App structure is stringified and the page load will be very quick, but the data will take an extra 50-100ms or so to populate after page load. This was the best option in my case for the time I had, because I needed that data to come through to set certain state variables which dynamically updated the display on the page. As I tested pre-rendering all the data, the state was not dynamically updated.
 
 One more note:
+
 I was originally setting the state of the gameId with `window.location.pathname.split(‘/‘)[1]`, but due to the order of operations, I had to wait for the component to mount before we had access to the window object, because I can’t stringify a window value on the server that doesn’t exist yet. So, I moved that to `this.setState()` within `componentDidMount()`.
 
 
@@ -549,18 +561,24 @@ GET Requests were made at random to 100,000 of the GameId pages
 - GET 1000 RPS - avg. 230ms
 - GET 1500 RPS - avg. 1508ms (performance greatly wained from here up)
 
+![gethtml](https://i.imgur.com/a/9ykBrr0.png)
+
 ##### After Server-Side Rendering the HTML
 - GET 10 RPS - avg. 126ms (101 ms Better!)
 - GET 100 RPS - avg. 124ms (100 ms Better!)
 - GET 1000 RPS - avg. 1901ms (worse)
 - GET 1500 RPS - avg. 2943ms (worse)
 
-(extra tests on the SSR)
-- GET 750 RPS - avg. 137ms (still very good!)
-- GET 800 RPS - avg. 216ms 
+![gethtmlssr](https://i.imgur.com/a/CrhnFgF.png)
+
+(extra test on the SSR)
+- GET 700 RPS - avg. 130ms (still excellent!)
+
+![gethtml700](https://i.imgur.com/a/Tsz0w0H.png)
 
 On the SSR’d page, *GET 800 RPS* was the point at which the performance matched the non-SSR’d page and above which started to perform worse.
-Given additional resources of time and money it appears that horizontal scaling and load balancing would be the solution. I believe that the reason that it started to perform worse was due to my single server trying to read and stringify the HTML page more than 800x per second. When it slowed, I started to see this error pop up repeatedly in the console: `Error: EMFILE: too many open files, open ‘index.html’`
+
+Given additional resources of time and money, horizontal scaling and load balancing would be the next optimization to implement.
 
 I am very pleased with the initial performance boost of SSR, plus the opportunity to work through the challenges and learn how it's done.
 

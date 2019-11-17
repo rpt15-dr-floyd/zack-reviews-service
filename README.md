@@ -464,7 +464,7 @@ GET Requests made to a range of 3,000 GameId pages selected at random (querying 
 - Run 3. GET 300 RPS - avg. 3987ms
 - Run 4. GET 300 RPS - avg. 3247ms **best** 
 
-![get](https://i.imgur.com/a/nxIqE1V.png)
+![get](https://i.imgur.com/6xVtams.png)
 
 *- the improvement in performance up to this point indicates that Postgres is doing a bit of caching on its own.*
 
@@ -477,7 +477,7 @@ GET Requests made to a range of 3,000 GameId pages selected at random (querying 
 - Run 3. GET 300 RPS - avg. 64ms **best** 
 *- fully cached*
 
-![getredis](https://i.imgur.com/a/F8zRp7A.png)
+![getredis](https://i.imgur.com/nSb9UAc.png)
 
 ##### Additional Redis Stress Test
 500 RPS was about the highest I was able to handle with Redis installed (as opposed to barely 300 without).
@@ -489,8 +489,7 @@ I tested this Redis config over 5,000 randomly selected Game Id's in 4 consecuti
 - Run 4. GET 500 RPS - avg. 64ms **best**
 *- fully cached*
 
-![getredis500](https://i.imgur.com/a/DpWngpH.png)
-https://imgur.com/a/DpWngpH
+![getredis500](https://i.imgur.com/eORN8W3.png)
 
 Redis only helped performance - no downside was observed in this configuration. However, a better way to use Redis would be to install it on the database’s EC2, or even better its own dedicated EC2 instance. This would allow Redis full access to the processing power of one instance without competing for CPU with the server or DB.
 
@@ -561,7 +560,7 @@ GET Requests were made at random to 100,000 of the GameId pages
 - GET 1000 RPS - avg. 230ms
 - GET 1500 RPS - avg. 1508ms (performance greatly wained from here up)
 
-![gethtml](https://i.imgur.com/a/9ykBrr0.png)
+![gethtml](https://i.imgur.com/xLOcZtZ.png)
 
 ##### After Server-Side Rendering the HTML
 - GET 10 RPS - avg. 126ms (101 ms Better!)
@@ -569,12 +568,12 @@ GET Requests were made at random to 100,000 of the GameId pages
 - GET 1000 RPS - avg. 1901ms (worse)
 - GET 1500 RPS - avg. 2943ms (worse)
 
-![gethtmlssr](https://i.imgur.com/a/CrhnFgF.png)
+![gethtmlssr](https://i.imgur.com/ZqxYstp.png)
 
 (extra test on the SSR)
 - GET 700 RPS - avg. 130ms (still excellent!)
 
-![gethtml700](https://i.imgur.com/a/Tsz0w0H.png)
+![gethtml700](https://i.imgur.com/Wr6uCtm.png)
 
 On the SSR’d page, *GET 800 RPS* was the point at which the performance matched the non-SSR’d page and above which started to perform worse.
 
